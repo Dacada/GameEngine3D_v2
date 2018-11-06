@@ -1,15 +1,12 @@
+#include <Base/engine3D_util.h>
 #include <engine3D_window.h>
-#include <engine3D_input.h>
-#include <engine3D_util.h>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
-
 #include <stdio.h>
 #include <stdbool.h>
 
-static GLFWwindow *window;
+static engine3D_window_t *window;
 static const char *current_title;
 
 #ifdef DEBUG
@@ -99,7 +96,7 @@ static void GLAPIENTRY debugMessage(GLenum source, GLenum type, GLuint id, GLenu
 }
 #endif
 
-GLFWwindow *engine3D_window_create(const int width, const int height, const char *const title) {
+engine3D_window_t *engine3D_window_create(const int width, const int height, const char *const title) {
 	if (!glfwInit()) {
 		engine3D_util_bail("failed to initialize glfw");
 	}
@@ -116,8 +113,6 @@ GLFWwindow *engine3D_window_create(const int width, const int height, const char
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(0);
-	glfwSetKeyCallback(window, (GLFWkeyfun)_engine3D_input_keyCallback);
-	glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)_engine3D_input_mouseButtonCallback);
 
 	if (glewInit() != GLEW_OK) {
 		engine3D_util_bail("failed to initialize glew");

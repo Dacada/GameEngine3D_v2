@@ -1,10 +1,9 @@
-#include <engine3D_main.h>
-#include <engine3D_window.h>
-#include <engine3D_time.h>
+#include <Base/engine3D_time.h>
+#include <RenderingEngine/engine3D_window.h>
+#include <RenderingEngine/engine3D_renderUtil.h>
+#include <Base/engine3D_transform.h>
 #include <engine3D_input.h>
-#include <engine3D_renderUtil.h>
-#include <engine3D_transform.h>
-
+#include <engine3D_main.h>
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -14,7 +13,6 @@ const char *const engine3D_title = "3D Engine";
 const double engine3D_frameCap = 5000.0;
 
 int engine3D_fps = 0;
-char *engine3D_resourcesPath = NULL;
 
 static bool isRunning = false;
 
@@ -92,7 +90,8 @@ static void run(void) {
 
 void engine3D_init(void) {
 	engine3D_timer_init();
-	engine3D_input_window = engine3D_window_create(engine3D_width, engine3D_height, engine3D_title);
+	engine3D_window_t *window = engine3D_window_create(engine3D_width, engine3D_height, engine3D_title);
+	engine3D_input_init(window);
 	engine3D_renderUtil_initGraphics();
 	puts(engine3D_renderUtil_getOpenGLVersion());
 	game_init();

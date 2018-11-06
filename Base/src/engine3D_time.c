@@ -28,7 +28,7 @@ void engine3D_time_sleep(const double t) {
 #endif
 
 #ifdef __unix__
-#include <engine3D_util.h>
+#include "engine3D_util.h"
 #include <stdio.h>
 #include <errno.h>
 #include <time.h>

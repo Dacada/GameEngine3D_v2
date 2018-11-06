@@ -1,7 +1,7 @@
 #ifndef ENGINE3D_STRTOINTMAP_H
 #define ENGINE3D_STRTOINTMAP_H
 
-#include <engine3D_growingArray.h>
+#include "engine3D_growingArray.h"
 
 #include <stdbool.h>
 #include <stdlib.h>

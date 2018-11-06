@@ -6,6 +6,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+const char *engine3D_util_resourcesPath = "res";
+
 void engine3D_util_bail(const char *const message) {
 	fputs(message, stderr);
 	fputc('\n', stderr);
@@ -63,6 +65,7 @@ int engine3D_util_debugPrintf(const char *format, ...) {
 	va_end(args);
 	return ret;
 #else
+  UNUSED(format);
 	return 0;
 #endif
 }
@@ -75,6 +78,7 @@ int engine3D_util_debugPrint(const char *string) {
 #ifdef DEBUG
 	return fputs(string, stderr);
 #else
+	UNUSED(string);
 	return 0;
 #endif
 }

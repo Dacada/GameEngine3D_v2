@@ -1,12 +1,11 @@
 #ifndef ENGINE3D_INPUT_H
 #define ENGINE3D_INPUT_H
 
-#include "engine3D_vector.h"
-
+#include <Base/engine3D_vector.h>
+#include <RenderingEngine/engine3D_window.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
-
 #include <stdbool.h>
 
 typedef enum engine3D_input_cursorMode {
@@ -153,7 +152,7 @@ typedef enum engine3D_input_mouseButton {
 #define ENGINE3D_MOUSE_BUTTON_RIGHT (ENGINE3D_MOUSE_BUTTON_2)
 #define ENGINE3D_MOUSE_BUTTON_MIDDLE (ENGINE3D_MOUSE_BUTTON_3)
 
-extern GLFWwindow *engine3D_input_window;
+void engine3D_input_init(engine3D_window_t *const window);
 
 void engine3D_input_update(void);
 
@@ -174,9 +173,5 @@ void engine3D_input_getMousePosition(engine3D_vector2f_t *const position);
 void engine3D_input_setMousePosition(const engine3D_vector2f_t *const position);
 
 void engine3D_input_setCursor(const engine3D_input_cursorMode mode);
-
-void _engine3D_input_keyCallback(const GLFWwindow *const window, const int key, const int scancode, const int action, const int mods);
-
-void _engine3D_input_mouseButtonCallback(const GLFWwindow *const window, const int button, const int action, const int mods);
 
 #endif /* ENGINE3D_INPUT_H */

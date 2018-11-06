@@ -1,12 +1,16 @@
+#include <Base/engine3D_growingArray.h>
+#include <Base/engine3D_util.h>
 #include <engine3D_mesh.h>
 #include <engine3D_vertex.h>
-#include <engine3D_resourceLoader.h>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
-
+#include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 
 static void calcNormals(engine3D_vertex_t vertices[], size_t vertices_len, unsigned int indices[], size_t indices_len) {
 	for (size_t i = 0; i < indices_len; i += 3) {
@@ -70,7 +74,7 @@ static void skipWhitespace(char **buff) {
 	*buff = b;
 }
 
-static static char *getNextToken(char *ptr, char buff[], size_t len) {
+static char *getNextToken(char *ptr, char buff[], size_t len) {
 	skipWhitespace(&ptr);
 
 	if (*ptr == '\0') {
@@ -92,7 +96,7 @@ static static char *getNextToken(char *ptr, char buff[], size_t len) {
 	return NULL;
 }
 
-static static float readNextFloat(char **ptr) {
+static float readNextFloat(char **ptr) {
 	char *tmp;
 	errno = 0;
 	float num = strtof(*ptr, &tmp);
@@ -110,7 +114,7 @@ static static float readNextFloat(char **ptr) {
 	return num;
 }
 
-static static long readNextLong(char **ptr) {
+static long readNextLong(char **ptr) {
 	char *tmp;
 	errno = 0;
 	long num = strtol(*ptr, &tmp, 10);
@@ -129,7 +133,7 @@ static static long readNextLong(char **ptr) {
 	return num;
 }
 
-static static void readFaces(char *input, int faces[3][3], size_t iv, size_t itv, size_t inv) {
+static void readFaces(char *input, int faces[3][3], size_t iv, size_t itv, size_t inv) {
 	size_t i, j;
 
 	for (i = 0; i < 9; i++) {
@@ -262,7 +266,7 @@ static size_t setSeenIndex(int face[3]) {
 
 static void loadMesh(const char *const filename, engine3D_mesh_t *const mesh) {
 	char filepath[256];
-	strncpy(filepath, resourcesPath, 256);
+	strncpy(filepath, engine3D_util_resourcesPath, 256);
 	strncat(filepath, "models/", 256);
 	strncat(filepath, filename, 128);
 

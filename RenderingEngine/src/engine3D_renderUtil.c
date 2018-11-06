@@ -1,9 +1,7 @@
 #include <engine3D_renderUtil.h>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
-
 #include <stdbool.h>
 
 void engine3D_renderUtil_clearScreen(void) {

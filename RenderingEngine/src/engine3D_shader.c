@@ -1,8 +1,7 @@
+#include <Base/engine3D_util.h>
 #include <engine3D_shader.h>
-#include <engine3D_util.h>
-#include <engine3D_resourceLoader.h>
-
 #include <stdlib.h>
+#include <string.h>
 
 static void addProgram(const char *const text, engine3D_shader_t * const shader, GLenum type) {
 	GLuint shaderId = glCreateShader(type);
@@ -48,7 +47,7 @@ engine3D_shader_t *engine3D_shader_init(engine3D_shader_t * const shader) {
 
 static char *loadShader(const char *const filename, char *const text, size_t size) {
 	char filepath[256];
-	strncpy(filepath, engine3D_resourcesPath, 256);
+	strncpy(filepath, engine3D_util_resourcesPath, 256);
 	strncat(filepath, "shaders/", 256);
 	strncat(filepath, filename, 128);
 

@@ -5,22 +5,22 @@ LIBS = -lGLEW -lGLU -lGL -lfreeimage -lm
 
 CC = gcc
 CFLAGS = -I$(INCDIR) -I$(LIBINCDIR) -Wall -Wextra -Werror -std=gnu99 -Wformat\
-         -Wformat-security -D_FORTIFY_SOURCE=2 -flto -fuse-linker-plugin\
+         -Wformat-security -D_FORTIFY_SOURCE=2\
          $(shell pkg-config --cflags glfw3)
-LDFLAGS = -Wall -Werror -std=gnu99 -flto -fuse-linker-plugin\
+LDFLAGS = -Wall -Werror -std=gnu99\
 	  $(LIBS) $(shell pkg-config --static --libs glfw3)
 
 DBGCFLAGS = -Og -DDEBUG -fsanitize=address -fsanitize=undefined -fsanitize=leak -fno-omit-frame-pointer
-RELCFLAGS = -O3
+RELCFLAGS = -O3 -flto -fuse-linker-plugin
 
 DBGLDFLAGS = -Og
-RELLDFLAGS = -O3
+RELLDFLAGS = -O3 -flto -fuse-linker-plugin
 
 SRCFILES = $(wildcard $(SRCDIR)/*.c)
 INCFILES = $(wildcard $(INCDIR)/*.h)
 DBGOBJFILES = $(patsubst $(SRCDIR)/%, debug/%, $(SRCFILES:.c=.o))
 RELOBJFILES = $(patsubst $(SRCDIR)/%, release/%, $(SRCFILES:.c=.o))
-STATICLIBS = CoreEngine.a PhysicsEngine.a RenderingEngine.a
+STATICLIBS = CoreEngine.a PhysicsEngine.a RenderingEngine.a Base.a
 DBGSTATICLIBS = $(patsubst %, lib/debug/%, $(STATICLIBS))
 RELSTATICLIBS = $(patsubst %, lib/release/%, $(STATICLIBS))
 

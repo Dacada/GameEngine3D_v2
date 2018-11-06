@@ -1,25 +1,68 @@
 #include <engine3D_input.h>
-#include <engine3D_vector.h>
-
+#include <Base/engine3D_vector.h>
+#include <Base/engine3D_util.h>
+#include <RenderingEngine/engine3D_window.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <string.h>
 
 #define LEN_KEYS (GLFW_KEY_LAST + 1)
 #define LEN_MOUSE_BUTTONS (GLFW_MOUSE_BUTTON_LAST + 1)
 
-GLFWwindow *engine3D_input_window = NULL;
+engine3D_window_t *window;
 
-static bool keys[LEN_KEYS];
-static bool keysState[LEN_KEYS];
-static bool keysDown[LEN_KEYS];
-static bool keysUp[LEN_KEYS];
+bool keys[LEN_KEYS];
+bool keysState[LEN_KEYS];
+bool keysDown[LEN_KEYS];
+bool keysUp[LEN_KEYS];
 
-static bool mouseButtons[LEN_MOUSE_BUTTONS];
-static bool mouseButtonsState[LEN_MOUSE_BUTTONS];
-static bool mouseButtonsDown[LEN_MOUSE_BUTTONS];
-static bool mouseButtonsUp[LEN_MOUSE_BUTTONS];
+bool mouseButtons[LEN_MOUSE_BUTTONS];
+bool mouseButtonsState[LEN_MOUSE_BUTTONS];
+bool mouseButtonsDown[LEN_MOUSE_BUTTONS];
+bool mouseButtonsUp[LEN_MOUSE_BUTTONS];
+
+static void keyCallback(const engine3D_window_t *const w, const int key, const int scancode, const int action, const int mods) {
+	UNUSED(scancode);
+	UNUSED(mods);
+
+#ifdef DEBUG
+	if (w != window) {
+		engine3D_util_debugPrint("warning: received keyboard input from unexpected window");
+	}
+#else
+	UNUSED(w);
+#endif
+
+	if (key < 0 || key > LEN_KEYS) {
+		engine3D_util_debugPrintf("warning: ignoring unexpected input keycode: %d", key);
+		return;
+	}
+	keys[key] = action != GLFW_RELEASE;
+}
+
+static void mouseButtonCallback(const engine3D_window_t *const w, const int button, const int action, const int mods) {
+	UNUSED(mods);
+
+#ifdef DEBUG
+	if (w != window) {
+		engine3D_util_debugPrint("warning: received mouse button input from unexpected window");
+	}
+#else
+	UNUSED(w);
+#endif
+
+	if (button < 0 || button > LEN_MOUSE_BUTTONS) {
+		engine3D_util_debugPrintf("warning: ignoring unexpected input mousebutton: %d", button);
+		return;
+	}
+	mouseButtons[button] = action != GLFW_RELEASE;
+}
+
+void engine3D_input_init(engine3D_window_t *const w) {
+	window = w;
+	glfwSetKeyCallback(w, (GLFWkeyfun)keyCallback);
+	glfwSetMouseButtonCallback(w, (GLFWmousebuttonfun)mouseButtonCallback);
+}
 
 void engine3D_input_update(void) {
 	for (int i = 0; i < LEN_KEYS; i++)
@@ -75,47 +118,26 @@ bool engine3D_input_getMouseUp(const engine3D_input_mouseButton mouseButton) {
 
 void engine3D_input_getMousePosition(engine3D_vector2f_t *const position) {
 	double x, y;
-	glfwGetCursorPos(engine3D_input_window, &x, &y);
+	glfwGetCursorPos(window, &x, &y);
 	position->x = (float)x;
 	position->y = (float)y;
 }
 
 void engine3D_input_setMousePosition(const engine3D_vector2f_t *const position) {
-	glfwSetCursorPos(engine3D_input_window, position->x, position->y);
+	glfwSetCursorPos(window, position->x, position->y);
 }
 
 void engine3D_input_setCursor(const engine3D_input_cursorMode mode) {
 	switch (mode)
 	{
 	case ENGINE3D_CURSOR_ENABLED:
-		glfwSetInputMode(engine3D_input_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		break;
 	case ENGINE3D_CURSOR_HIDDEN:
-		glfwSetInputMode(engine3D_input_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		break;
 	case ENGINE3D_CURSOR_DISABLED:
-		glfwSetInputMode(engine3D_input_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		break;
 	}
-}
-
-void _engine3D_input_keyCallback(const GLFWwindow *const window, const int key, const int scancode, const int action, const int mods) {
-	// Suppress unused warnings
-	(void)window;
-	(void)scancode;
-	(void)mods;
-
-	if (key < 0 || key > LEN_KEYS)
-		return;
-	keys[key] = action != GLFW_RELEASE;
-}
-
-void _engine3D_input_mouseButtonCallback(const GLFWwindow *const window, const int button, const int action, const int mods) {
-	// Suppress unused warnings
-	(void)window;
-	(void)mods;
-
-	if (button < 0 || button > LEN_MOUSE_BUTTONS)
-		return;
-	mouseButtons[button] = action != GLFW_RELEASE;
 }

@@ -1,8 +1,8 @@
 #ifndef ENGINE3D_MATERIAL
 #define ENGINE3D_MATERIAL
 
+#include <Base/engine3D_vector.h>
 #include "engine3D_texture.h"
-#include "engine3D_vector.h"
 
 typedef struct engine3D_material_t {
 	engine3D_texture_t *texture;

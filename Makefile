@@ -3,12 +3,14 @@
 all: rel
 
 rel:
+	$(MAKE) -C Base rel
 	$(MAKE) -C RenderingEngine rel
 	$(MAKE) -C PhysicsEngine rel
 	$(MAKE) -C CoreEngine rel
 	$(MAKE) -C Main rel
 
 dbg:
+	$(MAKE) -C Base dbg
 	$(MAKE) -C RenderingEngine dbg
 	$(MAKE) -C PhysicsEngine dbg
 	$(MAKE) -C CoreEngine dbg
@@ -19,4 +21,4 @@ clean:
 	$(MAKE) -C CoreEngine clean
 	$(MAKE) -C PhysicsEngine clean
 	$(MAKE) -C RenderingEngine clean
-
+	$(MAKE) -C Base clean

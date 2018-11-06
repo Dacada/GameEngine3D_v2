@@ -1,8 +1,8 @@
 #ifndef ENGINE3D_SHADER_H
 #define ENGINE3D_SHADER_H
 
-#include "engine3D_vector.h"
-#include "engine3D_strToIntMap.h"
+#include <Base/engine3D_vector.h>
+#include <Base/engine3D_strToIntMap.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

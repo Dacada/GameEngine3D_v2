@@ -1,9 +1,11 @@
+#include <Base/engine3D_util.h>
 #include <engine3D_texture.h>
-#include <engine3D_resourceLoader.h>
+#include <FreeImage.h>
+#include <string.h>
 
 static void loadTexture(const char *const filename, engine3D_texture_t *const texture) {
 	char filepath[256];
-	strncpy(filepath, resourcesPath, 256);
+	strncpy(filepath, engine3D_util_resourcesPath, 256);
 	strncat(filepath, "textures/", 256);
 	strncat(filepath, filename, 128);
 

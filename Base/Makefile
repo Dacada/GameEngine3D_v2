@@ -15,7 +15,7 @@ INCFILES = $(wildcard $(INCDIR)/*.h)
 DBGOBJFILES = $(patsubst $(SRCDIR)/%, debug/%, $(SRCFILES:.c=.o))
 RELOBJFILES = $(patsubst $(SRCDIR)/%, release/%, $(SRCFILES:.c=.o))
 
-FINAL = RenderingEngine.a
+FINAL = Base.a
 
 .PHONY: all rel dbg clean
 
@@ -32,9 +32,9 @@ dbg: debug/$(FINAL)
 clean:
 	rm -f debug/* release/*
 
-debug/$(FINAL): $(DBGOBJFILES) $(DBGSTATICLIBS)
+debug/$(FINAL): $(DBGOBJFILES)
 	$(AR) rcs $@ $^
-release/$(FINAL): $(RELOBJFILES) $(RELSTATICLIBS)
+release/$(FINAL): $(RELOBJFILES)
 	$(AR) rcs $@ $^
 
 debug:
@@ -46,3 +46,4 @@ debug/%.o: $(SRCDIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 release/%.o: $(SRCDIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
+
