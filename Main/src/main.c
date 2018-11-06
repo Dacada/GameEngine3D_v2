@@ -3,7 +3,6 @@
 #include <engine3D_mesh.h>
 #include <engine3D_shader.h>
 #include <engine3D_phongShader.h>
-#include <engine3D_resourceLoader.h>
 #include <engine3D_vertex.h>
 #include <engine3D_input.h>
 #include <engine3D_time.h>
@@ -27,6 +26,8 @@ static engine3D_texture_t texture;
 static engine3D_vector3f_t color;
 
 static void init(void) {
+	engine3engine3D_resources_path = "../res/";
+
 	engine3D_phongShader_init(&shader);
 	engine3D_transform_reset(&transform);
 	transform.translation.z = 5;

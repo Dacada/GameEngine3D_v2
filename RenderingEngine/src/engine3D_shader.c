@@ -46,6 +46,31 @@ engine3D_shader_t *engine3D_shader_init(engine3D_shader_t * const shader) {
 	return shader;
 }
 
+static char *loadShader(const char *const filename, char *const text, size_t size) {
+	char filepath[256];
+	strncpy(filepath, engine3D_resourcesPath, 256);
+	strncat(filepath, "shaders/", 256);
+	strncat(filepath, filename, 128);
+
+	FILE *f = fopen(filepath, "r");
+	if (f == NULL) {
+		perror("fopen");
+		engine3D_util_quit("failed to load shader");
+	}
+
+	size_t s = fread(text, sizeof(char), size, f);
+	int err;
+	if ((err = ferror(f)) != 0) {
+		engine3D_util_errPrintf("fread: error %d", err);
+		engine3D_util_quit("failed to load shader");
+	}
+	text[s] = '\0'; // Ensure it's null terminated
+
+	fclose(f);
+
+	return text;
+}
+
 engine3D_shader_t *engine3D_shader_addVertexShader(const char *const text, engine3D_shader_t * const shader) {
 	addProgram(text, shader, GL_VERTEX_SHADER);
 	return shader;
@@ -63,21 +88,21 @@ engine3D_shader_t *engine3D_shader_addFragmentShader(const char *const text, eng
 
 engine3D_shader_t *engine3D_shader_addVertexShaderFromFile(const char *const text, engine3D_shader_t * const shader) {
 	char shaderText[65536];
-	engine3D_resourceLoader_loadShader(text, shaderText, 65536);
+	loadShader(text, shaderText, 65536);
 	addProgram(shaderText, shader, GL_VERTEX_SHADER);
 	return shader;
 }
 
 engine3D_shader_t *engine3D_shader_addGeometryShaderFromFile(const char *const text, engine3D_shader_t * const shader) {
 	char shaderText[65536];
-	engine3D_resourceLoader_loadShader(text, shaderText, 65536);
+	loadShader(text, shaderText, 65536);
 	addProgram(shaderText, shader, GL_GEOMETRY_SHADER);
 	return shader;
 }
 
 engine3D_shader_t *engine3D_shader_addFragmentShaderFromFile(const char *const text, engine3D_shader_t * const shader) {
 	char shaderText[65536];
-	engine3D_resourceLoader_loadShader(text, shaderText, 65536);
+	loadShader(text, shaderText, 65536);
 	addProgram(shaderText, shader, GL_FRAGMENT_SHADER);
 	return shader;
 }

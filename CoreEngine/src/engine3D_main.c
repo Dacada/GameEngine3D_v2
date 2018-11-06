@@ -14,6 +14,7 @@ const char *const engine3D_title = "3D Engine";
 const double engine3D_frameCap = 5000.0;
 
 int engine3D_fps = 0;
+char *engine3D_resourcesPath = NULL;
 
 static bool isRunning = false;
 
