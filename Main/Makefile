@@ -30,13 +30,13 @@ FINAL = Main
 
 all: rel
 
-rel: CFLAGS += RELCFLAGS
-rel: LDFLAGS += RELLDFLAGS
+rel: CFLAGS += $(RELCFLAGS)
+rel: LDFLAGS += $(RELLDFLAGS)
 rel: | release
 rel: release/$(FINAL)
 
-dbg: CFLAGS += DBGCFLAGS
-dbg: LDFLAGS += DBGLDFLAGS
+dbg: CFLAGS += $(DBGCFLAGS)
+dbg: LDFLAGS += $(DBGLDFLAGS)
 dbg: | debug
 dbg: debug/$(FINAL)
 

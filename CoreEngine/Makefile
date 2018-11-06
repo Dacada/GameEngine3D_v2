@@ -21,11 +21,11 @@ FINAL = CoreEngine.a
 
 all: rel
 
-rel: CFLAGS += RELCFLAGS
+rel: CFLAGS += $(RELCFLAGS)
 rel: | release
 rel: release/$(FINAL)
 
-dbg: CFLAGS += DBGCFLAGS
+dbg: CFLAGS += $(DBGCFLAGS)
 dbg: | debug
 dbg: debug/$(FINAL)
 
