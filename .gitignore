@@ -1,0 +1,4 @@
+*.o
+*.a
+Main/debug/Main
+Main/release/Main
