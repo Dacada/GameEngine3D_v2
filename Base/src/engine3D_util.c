@@ -71,12 +71,16 @@ int engine3D_util_debugPrintf(const char *format, ...) {
 }
 
 int engine3D_util_errPrint(const char *string) {
-	return fputs(string, stderr);
+	int n = fputs(string, stderr);
+	fputc('\n', stderr);
+	return n + 1;
 }
 
 int engine3D_util_debugPrint(const char *string) {
 #ifdef DEBUG
-	return fputs(string, stderr);
+	int n = fputs(string, stderr);
+	fputc('\n', stderr);
+	return n + 1;
 #else
 	UNUSED(string);
 	return 0;

@@ -53,6 +53,8 @@ extern size_t engine3D_phongShader_numberOfSpotLights;
 
 engine3D_phongShader_t *engine3D_phongShader_init(engine3D_phongShader_t *const shader);
 
+void engine3D_phongShader_destroy(const engine3D_phongShader_t * const shader);
+
 void engine3D_phongShader_updateUniforms(engine3D_phongShader_t * const shader, const engine3D_matrix4f_t *const worldMatrix, const engine3D_matrix4f_t *projectedMatrix, const engine3D_material_t *const material, const engine3D_vector3f_t pos);
 
 void engine3D_phongShader_setUniformBaseLight(const char *const uniform, const engine3D_phongShader_baseLight_t *const value, const engine3D_phongShader_t *const shader);

@@ -1,3 +1,7 @@
+#version 320 es
+
+precision mediump float;
+
 in vec2 texCoord0;
 out vec4 fragColor;
 

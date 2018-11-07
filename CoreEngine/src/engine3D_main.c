@@ -1,7 +1,8 @@
+#include <Base/engine3D_util.h>
+#include <Base/engine3D_transform.h>
 #include <Base/engine3D_time.h>
 #include <RenderingEngine/engine3D_window.h>
 #include <RenderingEngine/engine3D_renderUtil.h>
-#include <Base/engine3D_transform.h>
 #include <engine3D_input.h>
 #include <engine3D_main.h>
 #include <stdio.h>
@@ -20,9 +21,11 @@ static game_callback_t game_init;
 static game_callback_t game_input;
 static game_callback_t game_update;
 static game_callback_t game_render;
+static game_callback_t game_cleanup;
 
 static void cleanup(void) {
 	engine3D_window_destroy();
+  game_cleanup();
 }
 
 static void render(void) {
@@ -69,9 +72,8 @@ static void run(void) {
 			game_update();
 
 			if (frameCounter >= engine3D_timer_second) {
-#ifdef DEBUG
-				printf("%d\n", engine3D_fps);
-#endif
+				engine3D_util_debugPrintf("%d", engine3D_fps);
+
 				engine3D_fps = 0;
 				frameCounter = 0;
 			}
@@ -122,4 +124,8 @@ void engine3D_setGame_update(const game_callback_t fun) {
 
 void engine3D_setGame_render(const game_callback_t fun) {
 	game_render = fun;
+}
+
+void engine3D_setGame_cleanup(const game_callback_t fun) {
+	game_cleanup = fun;
 }

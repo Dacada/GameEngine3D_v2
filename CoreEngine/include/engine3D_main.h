@@ -23,4 +23,6 @@ void engine3D_setGame_update(const game_callback_t fun);
 
 void engine3D_setGame_render(const game_callback_t fun);
 
+void engine3D_setGame_cleanup(const game_callback_t fun);
+
 #endif /* ENGINE3D_MAIN_H */

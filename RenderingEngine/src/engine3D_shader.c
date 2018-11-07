@@ -9,15 +9,7 @@ static void addProgram(const char *const text, engine3D_shader_t * const shader,
 		engine3D_util_bail("shader creation failed");
 	}
 
-	const char *sources[2];
-#ifdef ENGINE3D_USE_ES_SHADERS
-	sources[0] = "#version 300 es\nprecision mediump float;\n";
-#else
-	sources[0] = "#version 330\n";
-#endif
-	sources[1] = text;
-
-	glShaderSource(shaderId, 2, sources, NULL);
+	glShaderSource(shaderId, 1, &text, NULL);
 	glCompileShader(shaderId);
 
 	GLint status;
@@ -43,6 +35,11 @@ engine3D_shader_t *engine3D_shader_init(engine3D_shader_t * const shader) {
 		engine3D_util_bail("shader program creation failed");
 	}
 	return shader;
+}
+
+void engine3D_shader_destroy(const engine3D_shader_t *const shader) {
+	engine3D_strToIntMap_destroy(shader->uniforms);
+	free(shader->uniforms);
 }
 
 static char *loadShader(const char *const filename, char *const text, size_t size) {

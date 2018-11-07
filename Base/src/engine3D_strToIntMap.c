@@ -24,11 +24,20 @@ void engine3D_strToIntMap_init(engine3D_strToIntMap_t *const map) {
 	}
 }
 
+void engine3D_strToIntMap_destroy(const engine3D_strToIntMap_t *const map) {
+	for (size_t i = 0; i < ENGINE3D_STRTOINTMAP_HASHTABLE_ELEMENTS; i++) {
+		if (map->buckets[i] != NULL) {
+			engine3D_growingArray_discard(map->buckets[i]);
+		  free(map->buckets[i]);
+		}
+	}
+}
+
 void engine3D_strToIntMap_add(engine3D_strToIntMap_t *const map, const char *const key, const int value) {
 	size_t hash = djb2_hash_str(key) % ENGINE3D_STRTOINTMAP_HASHTABLE_ELEMENTS;
 	engine3D_growingArray_t *bucketsArray = map->buckets[hash];
 	if (bucketsArray == NULL) {
-		map->buckets[hash] = bucketsArray = malloc(sizeof(engine3D_growingArray_t));
+		map->buckets[hash] = bucketsArray = engine3D_util_safeMalloc(sizeof(engine3D_growingArray_t));
 		engine3D_growingArray_init(bucketsArray, sizeof(engine3D_strToIntMapBucket_t), 1);
 	}
 #ifdef DEBUG

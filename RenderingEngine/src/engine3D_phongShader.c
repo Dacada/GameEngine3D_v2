@@ -140,6 +140,10 @@ engine3D_phongShader_t *engine3D_phongShader_init(engine3D_phongShader_t *const 
 	return shader;
 }
 
+void engine3D_phongShader_destroy(const engine3D_phongShader_t * const shader) {
+	engine3D_shader_destroy((engine3D_shader_t*)shader);
+}
+
 void engine3D_phongShader_updateUniforms(engine3D_phongShader_t * const shader, const engine3D_matrix4f_t *const worldMatrix, const engine3D_matrix4f_t *projectedMatrix, const engine3D_material_t *const material, const engine3D_vector3f_t pos) {
 	if (material->texture != NULL)
 		engine3D_texture_bind(material->texture);
