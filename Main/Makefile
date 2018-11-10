@@ -1,7 +1,6 @@
 LDFLAGS += $(shell pkg-config --static --libs glfw3)
 
 SRCFILES = $(wildcard $(SRCDIR)/*.c)
-INCFILES = $(wildcard $(INCDIR)/*.h)
 DBGOBJFILES = $(patsubst $(SRCDIR)/%, debug/%, $(SRCFILES:.c=.o))
 RELOBJFILES = $(patsubst $(SRCDIR)/%, release/%, $(SRCFILES:.c=.o))
 STATICLIBS = CoreEngine.a PhysicsEngine.a RenderingEngine.a Base.a
