@@ -1,15 +1,3 @@
-SRCDIR = src
-INCDIR = include
-LIBINCDIR = lib/include
-
-AR = gcc-ar
-CC = gcc
-CFLAGS = -I$(INCDIR) -I$(LIBINCDIR) -Wall -Wextra -Werror -std=gnu99 -Wformat\
-         -Wformat-security -D_FORTIFY_SOURCE=2
-
-DBGCFLAGS = -Og -DDEBUG -fsanitize=address -fsanitize=undefined -fsanitize=leak -fno-omit-frame-pointer
-RELCFLAGS = -O3 -flto -fuse-linker-plugin
-
 SRCFILES = $(wildcard $(SRCDIR)/*.c)
 INCFILES = $(wildcard $(INCDIR)/*.h)
 DBGOBJFILES = $(patsubst $(SRCDIR)/%, debug/%, $(SRCFILES:.c=.o))
@@ -42,7 +30,7 @@ debug:
 release:
 	mkdir -p release
 
-debug/%.o: $(SRCDIR)/%.c
+debug/%.o: $(SRCDIR)/%.c $(INCFILES)
 	$(CC) -c -o $@ $< $(CFLAGS)
-release/%.o: $(SRCDIR)/%.c
+release/%.o: $(SRCDIR)/%.c $(INCFILES)
 	$(CC) -c -o $@ $< $(CFLAGS)

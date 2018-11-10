@@ -1,20 +1,4 @@
-SRCDIR = src
-INCDIR = include
-LIBINCDIR = lib/include
-LIBS = -lGLEW -lGLU -lGL -lfreeimage -lm
-
-CC = gcc
-CFLAGS = -I$(INCDIR) -I$(LIBINCDIR) -Wall -Wextra -Werror -std=gnu99 -Wformat\
-         -Wformat-security -D_FORTIFY_SOURCE=2\
-         $(shell pkg-config --cflags glfw3)
-LDFLAGS = -Wall -Werror -std=gnu99\
-	  $(LIBS) $(shell pkg-config --static --libs glfw3)
-
-DBGCFLAGS = -Og -DDEBUG -fsanitize=address -fsanitize=undefined -fsanitize=leak -fno-omit-frame-pointer
-RELCFLAGS = -O3 -flto -fuse-linker-plugin
-
-DBGLDFLAGS = -Og
-RELLDFLAGS = -O3 -flto -fuse-linker-plugin
+LDFLAGS += $(shell pkg-config --static --libs glfw3)
 
 SRCFILES = $(wildcard $(SRCDIR)/*.c)
 INCFILES = $(wildcard $(INCDIR)/*.h)
@@ -23,6 +7,10 @@ RELOBJFILES = $(patsubst $(SRCDIR)/%, release/%, $(SRCFILES:.c=.o))
 STATICLIBS = CoreEngine.a PhysicsEngine.a RenderingEngine.a Base.a
 DBGSTATICLIBS = $(patsubst %, lib/debug/%, $(STATICLIBS))
 RELSTATICLIBS = $(patsubst %, lib/release/%, $(STATICLIBS))
+BASELIBINCFILES = $(wildcard $(LIBINCDIR)/Base/*.h)
+RENDERINGLIBINCFILES = $(wildcard $(LIBINCDIR)/RenderingEngine/*.h)
+PHYSICSLIBINCFILES = $(wildcard $(LIBINCDIR)/PhysicsEngine/*.h)
+CORELIBINCFILES = $(wildcard $(LIBINCDIR)/CoreEngine/*.h)
 
 FINAL = Main
 
@@ -44,16 +32,16 @@ clean:
 	rm -f debug/* release/*
 
 debug/$(FINAL): $(DBGOBJFILES) $(DBGSTATICLIBS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 release/$(FINAL): $(RELOBJFILES) $(RELSTATICLIBS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 debug:
 	mkdir -p debug
 release:
 	mkdir -p release
 
-debug/%.o: $(SRCDIR)/%.c
+debug/%.o: $(SRCDIR)/%.c $(BASELIBINCFILES) $(RENDERINGLIBINCFILES) $(PHYSICSLIBINCFILES) $(CORELIBINCFILES)
 	$(CC) -c -o $@ $< $(CFLAGS)
-release/%.o: $(SRCDIR)/%.c
+release/%.o: $(SRCDIR)/%.c $(BASELIBINCFILES) $(RENDERINGLIBINCFILES) $(PHYSICSLIBINCFILES) $(CORELIBINCFILES)
 	$(CC) -c -o $@ $< $(CFLAGS)

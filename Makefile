@@ -1,5 +1,24 @@
 .PHONY: all rel dbg clean
 
+SRCDIR = src
+INCDIR = include
+LIBINCDIR = lib/include
+LIBS = -lGLEW -lGLU -lGL -lfreeimage -lm
+
+AR = gcc-ar
+CC = gcc
+CFLAGS = -I$(INCDIR) -I$(LIBINCDIR) -Wall -Wextra -Werror -std=gnu99 -Wformat\
+	         -Wformat-security -D_FORTIFY_SOURCE=2
+LDFLAGS = -Wall -Werror -std=gnu99 $(LIBS)
+
+DBGCFLAGS = -Og -DDEBUG -fsanitize=address -fsanitize=undefined -fsanitize=leak -fno-omit-frame-pointer
+RELCFLAGS = -O3 -flto -fuse-linker-plugin
+
+DBGLDFLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak
+RELLDFLAGS = -O3 -flto -fuse-linker-plugin
+
+export
+
 all: rel
 
 rel:
