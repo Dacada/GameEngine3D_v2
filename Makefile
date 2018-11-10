@@ -27,6 +27,7 @@ rel:
 	$(MAKE) -C PhysicsEngine rel
 	$(MAKE) -C CoreEngine rel
 	$(MAKE) -C Main rel
+	$(MAKE) -C UnitTests rel
 
 dbg:
 	$(MAKE) -C Base dbg
@@ -34,8 +35,10 @@ dbg:
 	$(MAKE) -C PhysicsEngine dbg
 	$(MAKE) -C CoreEngine dbg
 	$(MAKE) -C Main dbg
+	$(MAKE) -C UnitTests dbg
 
 clean:
+	$(MAKE) -C UnitTests clean
 	$(MAKE) -C Main clean
 	$(MAKE) -C CoreEngine clean
 	$(MAKE) -C PhysicsEngine clean
