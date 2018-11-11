@@ -1,28 +1,32 @@
 #ifndef ENGINE3D_MAIN_H
 #define ENGINE3D_MAIN_H
 
-extern const int engine3D_width;
-extern const int engine3D_height;
-extern const char *const engine3D_title;
-extern const double engine3D_frameCap;
-extern int engine3D_fps;
+#include <RenderingEngine/engine3D_window.h>
 
-typedef void(*game_callback_t)(void);
+typedef struct engine3D_game_t {
+  void(*init)(void);
+  void(*input)(void);
+  void(*update)(void);
+  void(*render)(void);
+  void(*cleanup)(void);
+} engine3D_game_t;
 
-void engine3D_init(void);
+typedef struct engine3D_core_t {
+  int windowWidth;
+  int windowHeight;
+  int fps;
+  bool isRunning;
+  double frameTime;
+  engine3D_window_t *window;
+  engine3D_game_t *game;
+} engine3D_core_t;
 
-void engine3D_start(void);
+void engine3D_core_init(engine3D_core_t *engine, int width, int height, double frameRate, engine3D_game_t *game);
 
-void engine3D_stop(void);
+void engine3D_core_createWindow(engine3D_core_t *engine, const char *const title);
 
-void engine3D_setGame_init(const game_callback_t fun);
+void engine3D_core_start(engine3D_core_t *engine);
 
-void engine3D_setGame_input(const game_callback_t fun);
-
-void engine3D_setGame_update(const game_callback_t fun);
-
-void engine3D_setGame_render(const game_callback_t fun);
-
-void engine3D_setGame_cleanup(const game_callback_t fun);
+void engine3D_core_stop(engine3D_core_t *engine);
 
 #endif /* ENGINE3D_MAIN_H */

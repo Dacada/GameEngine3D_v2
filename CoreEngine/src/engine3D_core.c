@@ -8,43 +8,24 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-const int engine3D_width = 800;
-const int engine3D_height = 600;
-const char *const engine3D_title = "3D Engine";
-const double engine3D_frameCap = 5000.0;
-
-int engine3D_fps = 0;
-
-static bool isRunning = false;
-
-static game_callback_t game_init;
-static game_callback_t game_input;
-static game_callback_t game_update;
-static game_callback_t game_render;
-static game_callback_t game_cleanup;
-
-static void cleanup(void) {
+static void cleanup(engine3D_core_t *engine) {
 	engine3D_window_destroy();
-  game_cleanup();
+	engine->game->cleanup();
 }
 
-static void render(void) {
+static void render(engine3D_core_t *engine) {
 	engine3D_renderUtil_clearScreen();
-	game_render();
+	engine->game->render();
 	engine3D_window_update();
 }
 
-static void run(void) {
-	isRunning = true;
-
+static void run(engine3D_core_t *engine) {
 	double frameCounter = 0;
-
-	const double frameTime = 1.0 / engine3D_frameCap;
 
 	double lastFrameTime = engine3D_timer_getTime();
 	double unprocessedTime = 0;
 
-	while (isRunning) {
+	while (engine->isRunning) {
 		bool doRender = false;
 
 		double currentFrameTime = engine3D_timer_getTime();
@@ -54,78 +35,72 @@ static void run(void) {
 		unprocessedTime += lastFrameElapsedTime / engine3D_timer_second;
 		frameCounter += lastFrameElapsedTime;
 
-		while (unprocessedTime > frameTime)
+		while (unprocessedTime > engine->frameTime)
 		{
 			doRender = true;
 
-			unprocessedTime -= frameTime;
+			unprocessedTime -= engine->frameTime;
 
 			if (engine3D_window_closeRequested()) {
-				engine3D_stop();
+				engine3D_core_stop(engine);
 			}
 
-			engine3D_time_setDelta(frameTime);
+			engine3D_time_setDelta(engine->frameTime);
 
-			game_input();
+			engine->game->input();
 			engine3D_input_update();
 
-			game_update();
+			engine->game->update();
 
 			if (frameCounter >= engine3D_timer_second) {
-				engine3D_util_debugPrintf("%d", engine3D_fps);
+				engine3D_util_debugPrintf("%d", engine->fps);
 
-				engine3D_fps = 0;
+				engine->fps = 0;
 				frameCounter = 0;
 			}
 		}
 
 		if (doRender) {
-			render();
-			engine3D_fps++;
+			render(engine);
+			engine->fps++;
 		} else {
 			engine3D_time_sleep(0.001 * engine3D_timer_second);
 		}
 	}
 
-	cleanup();
+	cleanup(engine);
 }
 
-void engine3D_init(void) {
+void engine3D_core_init(engine3D_core_t *engine, int width, int height, double frameRate, engine3D_game_t *g) {
+	engine->isRunning = false;
+	engine->windowWidth = width;
+	engine->windowHeight = height;
+	engine->frameTime = 1.0 / frameRate;
+	engine->game = g;
 	engine3D_timer_init();
-	engine3D_window_t *window = engine3D_window_create(engine3D_width, engine3D_height, engine3D_title);
-	engine3D_input_init(window);
+}
+
+static void initializeRenderingSystem(void) {
 	engine3D_renderUtil_initGraphics();
 	puts(engine3D_renderUtil_getOpenGLVersion());
-	game_init();
 }
 
-void engine3D_start(void) {
-	if (isRunning) {
-		return;
+void engine3D_core_createWindow(engine3D_core_t *engine, const char *const title) {
+	engine3D_window_t *window = engine3D_window_create(engine->windowWidth, engine->windowHeight, title);
+	engine->window = window;
+	engine3D_input_init(window);
+	initializeRenderingSystem();
+}
+
+void engine3D_core_start(engine3D_core_t *engine) {
+	if (engine->isRunning) {
+		engine3D_util_bail("Attempt to start already running engine. Aborting.");
 	}
-	run();
+	engine->game->init();
+	engine->isRunning = true;
+	run(engine);
 }
 
-void engine3D_stop(void) {
-	isRunning = false;
-}
-
-void engine3D_setGame_init(const game_callback_t fun) {
-	game_init = fun;
-}
-
-void engine3D_setGame_input(const game_callback_t fun) {
-	game_input = fun;
-}
-
-void engine3D_setGame_update(const game_callback_t fun) {
-	game_update = fun;
-}
-
-void engine3D_setGame_render(const game_callback_t fun) {
-	game_render = fun;
-}
-
-void engine3D_setGame_cleanup(const game_callback_t fun) {
-	game_cleanup = fun;
+void engine3D_core_stop(engine3D_core_t *engine) {
+	engine->isRunning = false;
 }

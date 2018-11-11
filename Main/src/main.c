@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+static engine3D_core_t engine;
+
 static engine3D_mesh_t mesh;
 static engine3D_phongShader_t shader;
 static engine3D_transform_t transform;
@@ -22,6 +24,9 @@ static engine3D_camera_t camera;
 
 static engine3D_texture_t texture;
 static engine3D_vector3f_t color;
+
+static const int width = 800;
+static const int height = 600;
 
 static void init(void) {
 	engine3D_util_resourcesPath = "Main/res/";
@@ -42,16 +47,16 @@ static void init(void) {
 	float fieldDepth = 10;
 	float fieldWidth = 10;
 	engine3D_vertex_t vertices[] = { { {-fieldWidth,     0, -fieldDepth    },{0, 0},{0, 0, 0} },
-									 { {-fieldWidth,     0,  fieldDepth * 3},{0, 1},{0, 0, 0} },
-									 { { fieldWidth * 3, 0, -fieldDepth    },{1, 0},{0, 0, 0} },
-									 { { fieldWidth * 3, 0, fieldDepth * 3 },{1, 1},{0, 0, 0} } };
+									                 { {-fieldWidth,     0,  fieldDepth * 3},{0, 1},{0, 0, 0} },
+									                 { { fieldWidth * 3, 0, -fieldDepth    },{1, 0},{0, 0, 0} },
+									                 { { fieldWidth * 3, 0, fieldDepth * 3 },{1, 1},{0, 0, 0} } };
 	unsigned int indices[] = { 0,1,2, 2,1,3 };
 	engine3D_mesh_addVertices(&mesh, vertices, 4, indices, 6, true);
 
 	engine3D_transform_zNear = 0.1f;
 	engine3D_transform_zFar = 1000.0f;
-	engine3D_transform_width = (float)engine3D_width;
-	engine3D_transform_height = (float)engine3D_height;
+	engine3D_transform_width = (float)width;
+	engine3D_transform_height = (float)height;
 	engine3D_transform_fov = 70.0f;
 	engine3D_camera_init(&camera);
 
@@ -116,7 +121,7 @@ static void generalInput(float delta) {
 	(void)delta;
 
 	if (engine3D_input_getKey(ENGINE3D_KEY_ESCAPE)) {
-		engine3D_stop();
+		engine3D_core_stop(&engine);
 	}
 }
 
@@ -221,15 +226,22 @@ static void cleanup(void) {
 	engine3D_phongShader_destroy(&shader);
 }
 
-int main(void) {
-	engine3D_setGame_init(init);
-	engine3D_setGame_input(input);
-	engine3D_setGame_update(update);
-	engine3D_setGame_render(render);
-	engine3D_setGame_cleanup(cleanup);
+typedef struct myGameImplementation {
+	engine3D_game_t game;
+} myGameImplementation;
 
-	engine3D_init();
-	engine3D_start();
+int main(void) {
+	myGameImplementation game;
+
+	game.game.init = &init;
+	game.game.input = &input;
+	game.game.update = &update;
+	game.game.render = &render;
+	game.game.cleanup = &cleanup;
+
+	engine3D_core_init(&engine, width, height, 60, (engine3D_game_t*)&game);
+	engine3D_core_createWindow(&engine, "3D Game Engine");
+	engine3D_core_start(&engine);
 
 	return EXIT_SUCCESS;
 }
