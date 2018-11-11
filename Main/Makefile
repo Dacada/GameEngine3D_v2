@@ -1,6 +1,7 @@
 LDFLAGS += $(shell pkg-config --static --libs glfw3)
 
 SRCFILES = $(wildcard $(SRCDIR)/*.c)
+INCFILES = $(wildcard $(INCDIR)/*.h)
 DBGOBJFILES = $(patsubst $(SRCDIR)/%, debug/%, $(SRCFILES:.c=.o))
 RELOBJFILES = $(patsubst $(SRCDIR)/%, release/%, $(SRCFILES:.c=.o))
 STATICLIBS = CoreEngine.a PhysicsEngine.a RenderingEngine.a Base.a
@@ -40,7 +41,7 @@ debug:
 release:
 	mkdir -p release
 
-debug/%.o: $(SRCDIR)/%.c $(BASELIBINCFILES) $(RENDERINGLIBINCFILES) $(PHYSICSLIBINCFILES) $(CORELIBINCFILES)
+debug/%.o: $(SRCDIR)/%.c $(INCFILES) $(BASELIBINCFILES) $(RENDERINGLIBINCFILES) $(PHYSICSLIBINCFILES) $(CORELIBINCFILES)
 	$(CC) -c -o $@ $< $(CFLAGS)
-release/%.o: $(SRCDIR)/%.c $(BASELIBINCFILES) $(RENDERINGLIBINCFILES) $(PHYSICSLIBINCFILES) $(CORELIBINCFILES)
+release/%.o: $(SRCDIR)/%.c $(INCFILES) $(BASELIBINCFILES) $(RENDERINGLIBINCFILES) $(PHYSICSLIBINCFILES) $(CORELIBINCFILES)
 	$(CC) -c -o $@ $< $(CFLAGS)

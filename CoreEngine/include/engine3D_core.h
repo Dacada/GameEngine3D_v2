@@ -1,15 +1,8 @@
-#ifndef ENGINE3D_MAIN_H
-#define ENGINE3D_MAIN_H
+#ifndef ENGINE3D_CORE_H
+#define ENGINE3D_CORE_H
 
 #include <RenderingEngine/engine3D_window.h>
-
-typedef struct engine3D_game_t {
-  void(*init)(void);
-  void(*input)(void);
-  void(*update)(void);
-  void(*render)(void);
-  void(*cleanup)(void);
-} engine3D_game_t;
+#include "engine3D_game.h"
 
 typedef struct engine3D_core_t {
   int windowWidth;
@@ -29,4 +22,4 @@ void engine3D_core_start(engine3D_core_t *engine);
 
 void engine3D_core_stop(engine3D_core_t *engine);
 
-#endif /* ENGINE3D_MAIN_H */
+#endif /* ENGINE3D_CORE_H */

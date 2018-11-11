@@ -10,12 +10,12 @@
 
 static void cleanup(engine3D_core_t *engine) {
 	engine3D_window_destroy();
-	engine->game->cleanup();
+	engine->game->cleanup(engine->game);
 }
 
 static void render(engine3D_core_t *engine) {
 	engine3D_renderUtil_clearScreen();
-	engine->game->render();
+	engine->game->render(engine->game);
 	engine3D_window_update();
 }
 
@@ -47,10 +47,10 @@ static void run(engine3D_core_t *engine) {
 
 			engine3D_time_setDelta(engine->frameTime);
 
-			engine->game->input();
+			engine->game->input(engine->game);
 			engine3D_input_update();
 
-			engine->game->update();
+			engine->game->update(engine->game);
 
 			if (frameCounter >= engine3D_timer_second) {
 				engine3D_util_debugPrintf("%d", engine->fps);
@@ -96,7 +96,7 @@ void engine3D_core_start(engine3D_core_t *engine) {
 	if (engine->isRunning) {
 		engine3D_util_bail("Attempt to start already running engine. Aborting.");
 	}
-	engine->game->init();
+	engine->game->init(engine->game);
 	engine->isRunning = true;
 	run(engine);
 }
