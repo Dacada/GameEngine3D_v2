@@ -2,3 +2,5 @@
 *.a
 Main/debug/Main
 Main/release/Main
+UnitTests/debug/UnitTests
+UnitTests/release/UnitTests
