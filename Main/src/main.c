@@ -8,7 +8,7 @@
 #include <RenderingEngine/engine3D_camera.h>
 #include <RenderingEngine/engine3D_texture.h>
 #include <RenderingEngine/engine3D_renderUtil.h>
-#include <CoreEngine/engine3D_main.h>
+#include <CoreEngine/engine3D_core.h>
 #include <CoreEngine/engine3D_input.h>
 #include <stdbool.h>
 #include <stdlib.h>

@@ -4,7 +4,7 @@
 #include <RenderingEngine/engine3D_window.h>
 #include <RenderingEngine/engine3D_renderUtil.h>
 #include <engine3D_input.h>
-#include <engine3D_main.h>
+#include <engine3D_core.h>
 #include <stdio.h>
 #include <stdbool.h>
 
