@@ -9,17 +9,17 @@
 #define LEN_KEYS (GLFW_KEY_LAST + 1)
 #define LEN_MOUSE_BUTTONS (GLFW_MOUSE_BUTTON_LAST + 1)
 
-engine3D_window_t *window;
+static engine3D_window_t *window;
 
-bool keys[LEN_KEYS];
-bool keysState[LEN_KEYS];
-bool keysDown[LEN_KEYS];
-bool keysUp[LEN_KEYS];
+static bool keys[LEN_KEYS];
+static bool keysState[LEN_KEYS];
+static bool keysDown[LEN_KEYS];
+static bool keysUp[LEN_KEYS];
 
-bool mouseButtons[LEN_MOUSE_BUTTONS];
-bool mouseButtonsState[LEN_MOUSE_BUTTONS];
-bool mouseButtonsDown[LEN_MOUSE_BUTTONS];
-bool mouseButtonsUp[LEN_MOUSE_BUTTONS];
+static bool mouseButtons[LEN_MOUSE_BUTTONS];
+static bool mouseButtonsState[LEN_MOUSE_BUTTONS];
+static bool mouseButtonsDown[LEN_MOUSE_BUTTONS];
+static bool mouseButtonsUp[LEN_MOUSE_BUTTONS];
 
 static void keyCallback(const engine3D_window_t *const w, const int key, const int scancode, const int action, const int mods) {
 	UNUSED(scancode);

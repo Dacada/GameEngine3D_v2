@@ -1,20 +1,29 @@
 #include <Base/engine3D_transform.h>
+#include <Base/engine3D_util.h>
 #include <engine3D_camera.h>
+#include <stdbool.h>
 #include <string.h>
 
 static const engine3D_vector3f_t yAxis = { 0, 1, 0 };
 
-void engine3D_camera_init(engine3D_camera_t *const camera) {
-	camera->pos.x = 0;
-	camera->pos.y = 0;
-	camera->pos.z = 0;
-	camera->forward.x = 0;
-	camera->forward.y = 0;
-	camera->forward.z = 1;
-	camera->up.x = 0;
-	camera->up.y = 2;
-	camera->up.z = 0;
-	engine3D_camera_normalize(camera);
+static engine3D_camera_t instance;
+static bool isLoaded = false;
+
+engine3D_camera_t *engine3D_camera_getInstance(void) {
+  if (!isLoaded) {
+	instance.pos.x = 0;
+	instance.pos.y = 0;
+	instance.pos.z = 0;
+	instance.forward.x = 0;
+	instance.forward.y = 0;
+	instance.forward.z = 1;
+	instance.up.x = 0;
+	instance.up.y = 2;
+	instance.up.z = 0;
+	engine3D_camera_normalize(&instance);
+	isLoaded = true;
+  }
+  return &instance;
 }
 
 void engine3D_camera_normalize(engine3D_camera_t *const camera) {

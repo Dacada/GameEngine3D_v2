@@ -8,30 +8,37 @@
 #include <RenderingEngine/engine3D_phongShader.h>
 #include <RenderingEngine/engine3D_camera.h>
 #include <RenderingEngine/engine3D_texture.h>
+#include <meshRenderer.h>
 #include <RenderingEngine/engine3D_renderUtil.h>
 #include <CoreEngine/engine3D_core.h>
 #include <CoreEngine/engine3D_input.h>
+#include <CoreEngine/engine3D_gameObject.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
 
+static engine3D_transform_t transform;
+static engine3D_vector3f_t color;
+static engine3D_texture_t texture;
+static engine3D_material_t material;
+static engine3D_mesh_t mesh;
+
+static engine3D_gameObject_t root;
+static meshRenderer_t meshRenderer;
+
 static void init(engine3D_game_t *g) {
   myGameImplementation *game = (myGameImplementation*)g;
+	game->root = &root;
+	engine3D_gameObject_init(&root);
+	
 	engine3D_util_resourcesPath = "Main/res/";
 
-	engine3D_phongShader_init(&game->shader);
-	engine3D_transform_reset(&game->transform);
-	game->transform.translation.z = 5;
+	color.x = 1; color.y = 1; color.z = 1;
+	texture = engine3D_texture_loadFromFile("test.png");
+        material.texture = &texture;
+	material.color = color;
 
-	game->color.x = 1; game->color.y = 1; game->color.z = 1;
-	game->texture = engine3D_texture_loadFromFile("test.png");
-	game->material.texture = &game->texture;
-	game->material.color = game->color;
-	game->material.specularIntensity = 1;
-	game->material.specularPower = 8;
-
-	//engine3D_mesh_initFromFile("tetrahedron.obj", &game->mesh);
-	engine3D_mesh_init(&game->mesh);
+	engine3D_mesh_init(&mesh);
 	float fieldDepth = 10;
 	float fieldWidth = 10;
 	engine3D_vertex_t vertices[] = { { {-fieldWidth,     0, -fieldDepth    },{0, 0},{0, 0, 0} },
@@ -39,70 +46,20 @@ static void init(engine3D_game_t *g) {
 				         { { fieldWidth * 3, 0, -fieldDepth    },{1, 0},{0, 0, 0} },
 				         { { fieldWidth * 3, 0, fieldDepth * 3 },{1, 1},{0, 0, 0} } };
 	unsigned int indices[] = { 0,1,2, 2,1,3 };
-	engine3D_mesh_addVertices(&game->mesh, vertices, 4, indices, 6, true);
+	engine3D_mesh_addVertices(&mesh, vertices, 4, indices, 6, true);
+	
+	meshRenderer_init(&meshRenderer, &mesh, &material);
+	engine3D_gameObject_addComponent(&root, (engine3D_gameComponent_t*)&meshRenderer);
+
+	root.transform = &transform;
+	engine3D_transform_reset(root.transform);
+	root.transform->translation.z = 5;
 
 	engine3D_transform_zNear = 0.1f;
 	engine3D_transform_zFar = 1000.0f;
 	engine3D_transform_width = (float)game->width;
 	engine3D_transform_height = (float)game->height;
 	engine3D_transform_fov = 70.0f;
-	engine3D_camera_init(&game->camera);
-
-	engine3D_phongShader_ambientLight.x = 0.1f;
-	engine3D_phongShader_ambientLight.y = 0.1f;
-	engine3D_phongShader_ambientLight.z = 0.1f;
-
-	engine3D_phongShader_directionalLight.base.color.x = 0; // 1;
-	engine3D_phongShader_directionalLight.base.color.y = 0; // 1;
-	engine3D_phongShader_directionalLight.base.color.z = 0; // 1;
-	engine3D_phongShader_directionalLight.base.intensity = 0; //0.8f;
-	engine3D_phongShader_directionalLight.direction.x = 1;
-	engine3D_phongShader_directionalLight.direction.y = 1;
-	engine3D_phongShader_directionalLight.direction.z = 1;
-	engine3D_vector3f_normalize(&engine3D_phongShader_directionalLight.direction);
-
-	engine3D_phongShader_pointLights[0].base.color.x = 1;
-	engine3D_phongShader_pointLights[0].base.color.y = 0.5f;
-	engine3D_phongShader_pointLights[0].base.color.z = 0;
-	engine3D_phongShader_pointLights[0].base.intensity = 0.8f;
-	engine3D_phongShader_pointLights[0].atten.constant = 0;
-	engine3D_phongShader_pointLights[0].atten.linear = 0;
-	engine3D_phongShader_pointLights[0].atten.exponent = 1;
-	engine3D_phongShader_pointLights[0].position.x = 3;
-	engine3D_phongShader_pointLights[0].position.x = 0;
-	engine3D_phongShader_pointLights[0].position.x = 8;
-	engine3D_phongShader_pointLights[0].range = 6;
-
-	engine3D_phongShader_pointLights[1].base.color.x = 0;
-	engine3D_phongShader_pointLights[1].base.color.y = 0.5f;
-	engine3D_phongShader_pointLights[1].base.color.z = 1;
-	engine3D_phongShader_pointLights[1].base.intensity = 0.8f;
-	engine3D_phongShader_pointLights[1].atten.constant = 0;
-	engine3D_phongShader_pointLights[1].atten.linear = 0;
-	engine3D_phongShader_pointLights[1].atten.exponent = 1;
-	engine3D_phongShader_pointLights[1].position.x = 7;
-	engine3D_phongShader_pointLights[1].position.x = 0;
-	engine3D_phongShader_pointLights[1].position.x = 8;
-	engine3D_phongShader_pointLights[1].range = 6;
-
-	engine3D_phongShader_spotLights[0].pointLight.base.color.x = 0;
-	engine3D_phongShader_spotLights[0].pointLight.base.color.y = 1;
-	engine3D_phongShader_spotLights[0].pointLight.base.color.z = 1;
-	engine3D_phongShader_spotLights[0].pointLight.base.intensity = 0.8f;
-	engine3D_phongShader_spotLights[0].pointLight.atten.constant = 0;
-	engine3D_phongShader_spotLights[0].pointLight.atten.linear = 0;
-	engine3D_phongShader_spotLights[0].pointLight.atten.exponent = 0.1f;
-	engine3D_phongShader_spotLights[0].pointLight.position.x = game->camera.pos.x;
-	engine3D_phongShader_spotLights[0].pointLight.position.y = game->camera.pos.y;
-	engine3D_phongShader_spotLights[0].pointLight.position.z = game->camera.pos.z;
-	engine3D_phongShader_spotLights[0].pointLight.range = 30;
-	engine3D_phongShader_spotLights[0].direction.x = game->camera.forward.x;
-	engine3D_phongShader_spotLights[0].direction.y = game->camera.forward.y;
-	engine3D_phongShader_spotLights[0].direction.z = game->camera.forward.z;
-	engine3D_phongShader_spotLights[0].cutoff = 0.7f;
-
-	//engine3D_phongShader_numberOfPointLights = 2;
-	engine3D_phongShader_numberOfSpotLights = 1;
 }
 
 static void generalInput(myGameImplementation *game, float delta) {
@@ -114,6 +71,7 @@ static void generalInput(myGameImplementation *game, float delta) {
 }
 
 static void cameraInput(myGameImplementation *game, float delta) {
+  UNUSED(game);
 	float sensitivity = 0.5f;
 	float movAmt = delta * 10;
 
@@ -131,20 +89,20 @@ static void cameraInput(myGameImplementation *game, float delta) {
 	}
 
 	if (engine3D_input_getKey(ENGINE3D_KEY_W)) {
-		engine3D_camera_move(&game->camera, game->camera.forward, movAmt);
+		engine3D_camera_move(engine3D_camera_getInstance(), engine3D_camera_getInstance()->forward, movAmt);
 	}
 	if (engine3D_input_getKey(ENGINE3D_KEY_S)) {
-		engine3D_camera_move(&game->camera, game->camera.forward, -movAmt);
+		engine3D_camera_move(engine3D_camera_getInstance(), engine3D_camera_getInstance()->forward, -movAmt);
 	}
 	if (engine3D_input_getKey(ENGINE3D_KEY_A)) {
 		engine3D_vector3f_t vec;
-		engine3D_camera_left(&game->camera, &vec);
-		engine3D_camera_move(&game->camera, vec, movAmt);
+		engine3D_camera_left(engine3D_camera_getInstance(), &vec);
+		engine3D_camera_move(engine3D_camera_getInstance(), vec, movAmt);
 	}
 	if (engine3D_input_getKey(ENGINE3D_KEY_D)) {
 		engine3D_vector3f_t vec;
-		engine3D_camera_right(&game->camera, &vec);
-		engine3D_camera_move(&game->camera, vec, movAmt);
+		engine3D_camera_right(engine3D_camera_getInstance(), &vec);
+		engine3D_camera_move(engine3D_camera_getInstance(), vec, movAmt);
 	}
 
 	if (movingCamera) {
@@ -154,12 +112,12 @@ static void cameraInput(myGameImplementation *game, float delta) {
 
 		if (deltaPos.x != 0)
 		{
-			engine3D_camera_rotateY(&game->camera, deltaPos.x * sensitivity * delta);
+			engine3D_camera_rotateY(engine3D_camera_getInstance(), deltaPos.x * sensitivity * delta);
 		}
 
 		if (deltaPos.y != 0)
 		{
-			engine3D_camera_rotateX(&game->camera, deltaPos.y * sensitivity * delta);
+			engine3D_camera_rotateX(engine3D_camera_getInstance(), deltaPos.y * sensitivity * delta);
 		}
 	}
 }
@@ -170,54 +128,32 @@ static void input(engine3D_game_t *g) {
 
 	generalInput(game, t);
 	cameraInput(game, t);
+
+	engine3D_gameObject_input(game->root);
 }
 
 static void update(engine3D_game_t *g) {
   myGameImplementation *game = (myGameImplementation*)g;
-	static float tmp = 0.0f;
-	tmp += (float)engine3D_time_getDelta();
 
-	game->transform.translation.x = 0;
-	game->transform.translation.y = -1;
-	game->transform.translation.z = 5;
-	//transform.rotation.x = 0;
-	//transform.rotation.y = sinTmp * 180;
-	//transform.rotation.z = 0;
-	//transform.scale.x = sinTmp;
-	//transform.scale.y = sinTmp;
-	//transform.scale.z = sinTmp;
+  engine3D_gameObject_update(game->root);
 
-	engine3D_phongShader_pointLights[0].position.z = 8 * sinf(tmp) + 1.0f / 2.0f + 10;
-	engine3D_phongShader_pointLights[1].position.z = 8 * cosf(tmp) + 1.0f / 2.0f + 10;
-
-	engine3D_phongShader_spotLights[0].pointLight.position.x = game->camera.pos.x;
-	engine3D_phongShader_spotLights[0].pointLight.position.y = game->camera.pos.y;
-	engine3D_phongShader_spotLights[0].pointLight.position.z = game->camera.pos.z;
-	engine3D_phongShader_spotLights[0].direction.x = game->camera.forward.x;
-	engine3D_phongShader_spotLights[0].direction.y = game->camera.forward.y;
-	engine3D_phongShader_spotLights[0].direction.z = game->camera.forward.z;
+	transform.translation.x = 0;
+	transform.translation.y = -1;
+	transform.translation.z = 5;
 }
 
 static void render(engine3D_game_t *g) {
   myGameImplementation *game = (myGameImplementation*)g;
-	engine3D_renderUtils_setClearColor(engine3D_vector3f_abs(engine3D_vector3f_divf(game->camera.pos, 2048)));
-
-	engine3D_shader_bind((engine3D_shader_t *)&game->shader);
-
-	engine3D_matrix4f_t transformation, projectedTransformation;
-	engine3D_transform_getTransformation(&game->transform, &transformation);
-	engine3D_camera_getProjectedTransformation(&game->camera, &game->transform, &projectedTransformation);
-	engine3D_phongShader_updateUniforms(&game->shader, &transformation, &projectedTransformation, &game->material, game->camera.pos);
-
-	engine3D_mesh_draw(&game->mesh);
+  engine3D_gameObject_render(game->root);
 }
 
 static void cleanup(engine3D_game_t *g) {
   myGameImplementation *game = (myGameImplementation*)g;
-	engine3D_phongShader_destroy(&game->shader);
+  engine3D_gameObject_cleanup(game->root);
 }
 
 void makeMyGameImplementation(myGameImplementation *game) {
+  UNUSED(game);
 	game->game.init = &init;
 	game->game.input = &input;
 	game->game.update = &update;

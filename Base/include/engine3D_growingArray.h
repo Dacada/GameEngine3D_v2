@@ -27,6 +27,9 @@ void *engine3D_growingArray_finish(engine3D_growingArray_t *const array, bool tr
 // Return number of elements added to the growing array
 size_t engine3D_growingArray_length(const engine3D_growingArray_t *const array);
 
+// Get element of array at given index
+void *engine3D_growingArray_getAt(const engine3D_growingArray_t *const array, size_t index);
+
 // Completely discard the array, fees memory returned by growingArray_finish
 void engine3D_growingArray_discard(engine3D_growingArray_t *const array);
 

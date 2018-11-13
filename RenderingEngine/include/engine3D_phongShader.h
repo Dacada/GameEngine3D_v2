@@ -51,7 +51,7 @@ extern size_t engine3D_phongShader_numberOfPointLights;
 extern engine3D_phongShader_spotLight_t engine3D_phongShader_spotLights[ENGINE3D_PHONGSHADER_MAXSPOTLIGHTS];
 extern size_t engine3D_phongShader_numberOfSpotLights;
 
-engine3D_phongShader_t *engine3D_phongShader_init(engine3D_phongShader_t *const shader);
+engine3D_phongShader_t *engine3D_phongShader_getInstance(void);
 
 void engine3D_phongShader_destroy(const engine3D_phongShader_t * const shader);
 

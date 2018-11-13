@@ -1,7 +1,7 @@
 #include <gameImplementation.h>
 
-engine3D_core_t engine;
-myGameImplementation game;
+static engine3D_core_t engine;
+static myGameImplementation game;
 
 int main(void) {
   makeMyGameImplementation(&game);

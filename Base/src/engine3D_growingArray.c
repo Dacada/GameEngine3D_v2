@@ -26,7 +26,7 @@ void *engine3D_growingArray_add(engine3D_growingArray_t *const array) {
 		array->capacity *= 2;
 		array->array = engine3D_util_safeRealloc(array->array, array->capacity * array->elementSize);
 	}
-	return (void*)((size_t)array->array + array->elementSize * array->index++); // void pointer arithmetic is bad mkay
+	return engine3D_growingArray_getAt(array, array->index++);
 }
 
 void *engine3D_growingArray_finish(engine3D_growingArray_t *const array, bool trim) {
@@ -38,6 +38,10 @@ void *engine3D_growingArray_finish(engine3D_growingArray_t *const array, bool tr
 
 size_t engine3D_growingArray_length(const engine3D_growingArray_t *const array) {
 	return array->index;
+}
+
+void *engine3D_growingArray_getAt(const engine3D_growingArray_t *const array, size_t index) {
+  return (void*)((size_t)array->array + array->elementSize * index); // void pointer arithmetic is bad mkay
 }
 
 void engine3D_growingArray_discard(engine3D_growingArray_t *const array) {

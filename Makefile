@@ -1,4 +1,4 @@
-.PHONY: all rel dbg clean
+.PHONY: all rel dbg tests clean
 
 SRCDIR = src
 INCDIR = include
@@ -36,6 +36,10 @@ dbg:
 	$(MAKE) -C CoreEngine dbg
 	$(MAKE) -C Main dbg
 	$(MAKE) -C UnitTests dbg
+
+tests:
+	$(MAKE) -C Base rel
+	$(MAKE) -C UnitTests rel
 
 clean:
 	$(MAKE) -C UnitTests clean

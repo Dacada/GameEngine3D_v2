@@ -11,25 +11,29 @@ engine3D_phongShader_spotLight_t engine3D_phongShader_spotLights[ENGINE3D_PHONGS
 size_t engine3D_phongShader_numberOfPointLights = 0;
 size_t engine3D_phongShader_numberOfSpotLights = 0;
 
-engine3D_phongShader_t *engine3D_phongShader_init(engine3D_phongShader_t *const shader) {
-	engine3D_shader_init((engine3D_shader_t*)shader);
+static engine3D_phongShader_t instance;
+static bool isLoaded = false;
 
-	engine3D_shader_addVertexShaderFromFile("phongVertex.vs", (engine3D_shader_t*)shader);
-	engine3D_shader_addFragmentShaderFromFile("phongFragment.fs", (engine3D_shader_t*)shader);
-	engine3D_shader_compile((engine3D_shader_t*)shader);
+engine3D_phongShader_t *engine3D_phongShader_getInstance(void) {
+  if (!isLoaded) {
+	engine3D_shader_init((engine3D_shader_t*)&instance);
 
-	engine3D_shader_addUniform("transform", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("transformProjected", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("baseColor", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("ambientLight", (engine3D_shader_t*)shader);
+	engine3D_shader_addVertexShaderFromFile("phongVertex.vs", (engine3D_shader_t*)&instance);
+	engine3D_shader_addFragmentShaderFromFile("phongFragment.fs", (engine3D_shader_t*)&instance);
+	engine3D_shader_compile((engine3D_shader_t*)&instance);
 
-	engine3D_shader_addUniform("directionalLight.base.color", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("directionalLight.base.intensity", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("directionalLight.direction", (engine3D_shader_t*)shader);
+	engine3D_shader_addUniform("transform", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("transformProjected", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("baseColor", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("ambientLight", (engine3D_shader_t*)&instance);
 
-	engine3D_shader_addUniform("specularIntensity", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("specularPower", (engine3D_shader_t*)shader);
-	engine3D_shader_addUniform("eyePos", (engine3D_shader_t*)shader);
+	engine3D_shader_addUniform("directionalLight.base.color", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("directionalLight.base.intensity", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("directionalLight.direction", (engine3D_shader_t*)&instance);
+
+	engine3D_shader_addUniform("specularIntensity", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("specularPower", (engine3D_shader_t*)&instance);
+	engine3D_shader_addUniform("eyePos", (engine3D_shader_t*)&instance);
 
 	for (size_t i = 0; i < ENGINE3D_PHONGSHADER_MAXPOINTLIGHTS; i++) {
 		char str[128], base[64];
@@ -39,43 +43,43 @@ engine3D_phongShader_t *engine3D_phongShader_init(engine3D_phongShader_t *const 
 		str[127] = 0;
 		strncat(str, ".base.color", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".base.intensity", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".atten.constant", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".atten.linear", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".atten.exponent", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".position", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".range", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 	}
 
 	for (size_t i = 0; i < ENGINE3D_PHONGSHADER_MAXPOINTLIGHTS; i++) {
@@ -86,58 +90,61 @@ engine3D_phongShader_t *engine3D_phongShader_init(engine3D_phongShader_t *const 
 		str[127] = 0;
 		strncat(str, ".pointLight.base.color", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".pointLight.base.intensity", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".pointLight.atten.constant", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".pointLight.atten.linear", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".pointLight.atten.exponent", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".pointLight.position", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".pointLight.range", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".direction", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 
 		strncpy(str, base, 64);
 		str[127] = 0;
 		strncat(str, ".cutoff", 128);
 		str[127] = 0;
-		engine3D_shader_addUniform(str, (engine3D_shader_t*)shader);
+		engine3D_shader_addUniform(str, (engine3D_shader_t*)&instance);
 	}
 
-	return shader;
+	isLoaded = true;
+  }
+
+	return &instance;
 }
 
 void engine3D_phongShader_destroy(const engine3D_phongShader_t * const shader) {

@@ -9,7 +9,7 @@ typedef struct engine3D_camera_t {
 	engine3D_vector3f_t up;
 } engine3D_camera_t;
 
-void engine3D_camera_init(engine3D_camera_t *const camera);
+engine3D_camera_t *engine3D_camera_getInstance(void);
 
 void engine3D_camera_normalize(engine3D_camera_t *const camera);
 

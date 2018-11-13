@@ -8,7 +8,7 @@ typedef struct engine3D_basicShader_t {
 	engine3D_shader_t shader;
 } engine3D_basicShader_t;
 
-engine3D_basicShader_t *engine3D_basicShader_init(engine3D_basicShader_t *const shader);
+engine3D_basicShader_t *engine3D_basicShader_getInstance(void);
 
 void engine3D_basicShader_updateUniforms(engine3D_basicShader_t * const shader, const engine3D_matrix4f_t *const worldMatrix, const engine3D_matrix4f_t *projectedMatrix, const engine3D_material_t *const material);
 
