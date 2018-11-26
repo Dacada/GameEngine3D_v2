@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+// Data structure for an array that can grow automatically as elements are added to it
 typedef struct engine3D_growingArray_t {
 	size_t capacity; // capacity elements
 	size_t elementSize; // of elementSize size

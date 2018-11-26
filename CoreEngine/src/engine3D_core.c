@@ -2,21 +2,15 @@
 #include <Base/engine3D_transform.h>
 #include <Base/engine3D_time.h>
 #include <RenderingEngine/engine3D_window.h>
-#include <RenderingEngine/engine3D_renderUtil.h>
 #include <engine3D_input.h>
 #include <engine3D_core.h>
 #include <stdio.h>
 #include <stdbool.h>
 
 static void cleanup(engine3D_core_t *engine) {
-	engine3D_window_destroy();
+	engine3D_window_destroy(engine->window);
+	free(engine->renderer);
 	engine->game->cleanup(engine->game);
-}
-
-static void render(engine3D_core_t *engine) {
-	engine3D_renderUtil_clearScreen();
-	engine->game->render(engine->game);
-	engine3D_window_update();
 }
 
 static void run(engine3D_core_t *engine) {
@@ -41,7 +35,7 @@ static void run(engine3D_core_t *engine) {
 
 			unprocessedTime -= engine->frameTime;
 
-			if (engine3D_window_closeRequested()) {
+			if (engine3D_window_closeRequested(engine->window)) {
 				engine3D_core_stop(engine);
 			}
 
@@ -61,8 +55,9 @@ static void run(engine3D_core_t *engine) {
 		}
 
 		if (doRender) {
-			render(engine);
-			engine->fps++;
+		  engine3D_renderer_render(engine->renderer, engine->game->root);
+		  engine3D_window_update(engine->window);
+		  engine->fps++;
 		} else {
 			engine3D_time_sleep(0.001 * engine3D_timer_second);
 		}
@@ -72,24 +67,20 @@ static void run(engine3D_core_t *engine) {
 }
 
 void engine3D_core_init(engine3D_core_t *engine, int width, int height, double frameRate, engine3D_game_t *g) {
+	engine3D_timer_init();
 	engine->isRunning = false;
 	engine->windowWidth = width;
 	engine->windowHeight = height;
 	engine->frameTime = 1.0 / frameRate;
 	engine->game = g;
-	engine3D_timer_init();
-}
-
-static void initializeRenderingSystem(void) {
-	engine3D_renderUtil_initGraphics();
-	puts(engine3D_renderUtil_getOpenGLVersion());
 }
 
 void engine3D_core_createWindow(engine3D_core_t *engine, const char *const title) {
-	engine3D_window_t *window = engine3D_window_create(engine->windowWidth, engine->windowHeight, title);
-	engine->window = window;
-	engine3D_input_init(window);
-	initializeRenderingSystem();
+  engine3D_window_t *window = engine3D_window_create(engine->windowWidth, engine->windowHeight, title);
+  engine->window = window;
+  engine3D_input_init(window);
+  engine->renderer = engine3D_renderer_init(engine3D_util_safeMalloc(sizeof(engine3D_renderer_t)));
+  engine3D_util_debugPrint(engine3D_renderer_getOpenGLVersion());
 }
 
 void engine3D_core_start(engine3D_core_t *engine) {

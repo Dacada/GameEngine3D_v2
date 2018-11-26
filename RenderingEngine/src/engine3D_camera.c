@@ -6,29 +6,37 @@
 
 static const engine3D_vector3f_t yAxis = { 0, 1, 0 };
 
-static engine3D_camera_t instance;
-static bool isLoaded = false;
+engine3D_camera_t *engine3D_camera_init(engine3D_camera_t *const camera, float fov, float aspect, float zNear, float zFar) {
+  camera->pos.x = 0;
+  camera->pos.y = 0;
+  camera->pos.z = 0;
+  camera->forward.x = 0;
+  camera->forward.y = 0;
+  camera->forward.z = 1;
+  camera->up.x = 0;
+  camera->up.y = 1;
+  camera->up.z = 0;
+  engine3D_camera_normalize(camera);
 
-engine3D_camera_t *engine3D_camera_getInstance(void) {
-  if (!isLoaded) {
-	instance.pos.x = 0;
-	instance.pos.y = 0;
-	instance.pos.z = 0;
-	instance.forward.x = 0;
-	instance.forward.y = 0;
-	instance.forward.z = 1;
-	instance.up.x = 0;
-	instance.up.y = 2;
-	instance.up.z = 0;
-	engine3D_camera_normalize(&instance);
-	isLoaded = true;
-  }
-  return &instance;
+  camera->projection = engine3D_util_safeMalloc(sizeof(engine3D_matrix4f_t));
+  engine3D_matrix4f_setPerspective(camera->projection, zNear, zFar, aspect, fov);
+	
+  return camera;
 }
 
 void engine3D_camera_normalize(engine3D_camera_t *const camera) {
 	engine3D_vector3f_normalize(&camera->forward);
 	engine3D_vector3f_normalize(&camera->up);
+}
+
+void engine3D_camera_getViewProjection(const engine3D_camera_t *const camera, engine3D_matrix4f_t *result) {
+  engine3D_matrix4f_t cameraRotationMatrix, cameraTranslationMatrix, tmp1;
+  
+  engine3D_matrix4f_setCameraRotation(&cameraRotationMatrix, camera->forward, camera->up);
+  engine3D_matrix4f_setTranslation(&cameraTranslationMatrix, -camera->pos.x, -camera->pos.y, -camera->pos.z);
+
+  engine3D_matrix4f_mul(&cameraRotationMatrix, &cameraTranslationMatrix, &tmp1);
+  engine3D_matrix4f_mul(camera->projection, &tmp1, result);
 }
 
 void engine3D_camera_move(engine3D_camera_t *const camera, const engine3D_vector3f_t dir, const float amnt) {
@@ -57,15 +65,6 @@ void engine3D_camera_right(const engine3D_camera_t *const camera, engine3D_vecto
 	engine3D_vector3f_normalize(right);
 }
 
-void engine3D_camera_getProjectedTransformation(const engine3D_camera_t *const camera, const engine3D_transform_t *const transform, engine3D_matrix4f_t *const transformationMatrix) {
-	engine3D_matrix4f_t projectionMatrix, cameraRotationMatrix, cameraTranslationMatrix, tmp1, tmp2;
-
-	engine3D_transform_getTransformation(transform, transformationMatrix);
-	engine3D_matrix4f_setProjection(&projectionMatrix, engine3D_transform_zNear, engine3D_transform_zFar, engine3D_transform_width, engine3D_transform_height, engine3D_transform_fov);
-	engine3D_matrix4f_setCamera(&cameraRotationMatrix, camera->forward, camera->up);
-	engine3D_matrix4f_setTranslation(&cameraTranslationMatrix, -camera->pos.x, -camera->pos.y, -camera->pos.z);
-
-	engine3D_matrix4f_mul(&cameraTranslationMatrix, transformationMatrix, &tmp1);
-	engine3D_matrix4f_mul(&cameraRotationMatrix, &tmp1, &tmp2);
-	engine3D_matrix4f_mul(&projectionMatrix, &tmp2, transformationMatrix);
+void engine3D_camera_cleanup(engine3D_camera_t *camera) {
+  free(camera->projection);
 }

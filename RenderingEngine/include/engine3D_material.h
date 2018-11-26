@@ -4,11 +4,12 @@
 #include <Base/engine3D_vector.h>
 #include "engine3D_texture.h"
 
+// a material, including texture color and shader properties
 typedef struct engine3D_material_t {
-	engine3D_texture_t *texture;
-	engine3D_vector3f_t color;
-	float specularIntensity;
-	float specularPower;
+  engine3D_texture_t *texture; // texture
+  engine3D_vector3f_t color; // color
+  float specularIntensity; // for phong shader
+  float specularPower; // for phong shader
 } engine3D_material_t;
 
 #endif /* ENGINE3D_MATERIAL */

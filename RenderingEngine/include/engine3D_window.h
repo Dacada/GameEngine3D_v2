@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 #include <stdbool.h>
+#include <Base/engine3D_vector.h>
 
 typedef GLFWwindow engine3D_window_t;
 
@@ -13,16 +14,18 @@ engine3D_window_t *engine3D_window_create(const int width, const int height, con
 
 // Poll events and perform the framebuffer swap.
 // If on debug mode, query for OpenGL errors.
-void engine3D_window_update(void);
+void engine3D_window_update(engine3D_window_t *window);
 
 // True if window must be closed.
-bool engine3D_window_closeRequested(void);
+bool engine3D_window_closeRequested(engine3D_window_t *window);
 
-// Set the ints which pointers are given to the window's current width and height.
-// NULL is an accepted value for any of the two pointers.
-void engine3D_window_getSize(int *const width, int *const height);
+// get window size (x,y)
+engine3D_vector2f_t engine3D_window_getSize(engine3D_window_t *window);
+
+// get window's center coordinates (x,y)
+engine3D_vector2f_t engine3D_window_getCenter(engine3D_window_t *window);
 
 // Terminate and destroy the window.
-void engine3D_window_destroy(void);
+void engine3D_window_destroy(engine3D_window_t *window);
 
 #endif /* ENGINE3D_WINDOW_H */

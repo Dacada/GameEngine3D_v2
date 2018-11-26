@@ -1,9 +1,8 @@
 #include <engine3D_vector.h>
+#include <engine3D_util.h>
 
 #include <math.h>
 #include <string.h>
-
-#define TO_RADIANS(angle) ((angle) / 180 * (float)M_PI)
 
 float engine3D_vector2f_length(const engine3D_vector2f_t v) {
 	return sqrtf(v.x * v.x + v.y * v.y);
@@ -298,13 +297,12 @@ void engine3D_matrix4f_setScale(engine3D_matrix4f_t * const matrix, float x, flo
 	matrix->mat[2][2] = z;
 }
 
-void engine3D_matrix4f_setProjection(engine3D_matrix4f_t * const matrix, float zNear, float zFar, float width, float height, float fov) {
-	float ar = width / height;
-	float tanHalfFOV = tanf(TO_RADIANS(fov / 2));
+void engine3D_matrix4f_setPerspective(engine3D_matrix4f_t * const matrix, float zNear, float zFar, float aspectRatio, float fov) {
+	float tanHalfFOV = tanf(fov / 2);
 	float zRange = zNear - zFar;
 
 	engine3D_matrix4f_setIdentity(matrix);
-	matrix->mat[0][0] = 1.0f / (tanHalfFOV * ar);
+	matrix->mat[0][0] = 1.0f / (tanHalfFOV * aspectRatio);
 	matrix->mat[1][1] = 1.0f / tanHalfFOV;
 	matrix->mat[2][2] = (-zNear - zFar) / zRange;
 	matrix->mat[3][2] = 1.0f;
@@ -312,7 +310,21 @@ void engine3D_matrix4f_setProjection(engine3D_matrix4f_t * const matrix, float z
 	matrix->mat[3][3] = 0;
 }
 
-void engine3D_matrix4f_setCamera(engine3D_matrix4f_t *const matrix, const engine3D_vector3f_t forward, const engine3D_vector3f_t up) {
+void engine3D_matrix4f_setOrthographic(engine3D_matrix4f_t * const matrix, float left, float right, float bottom, float top, float near, float far) {
+  float width = right - left;
+  float height = top - bottom;
+  float depth = far - near;
+
+  engine3D_matrix4f_setIdentity(matrix);
+  matrix->mat[0][0] = 2/width;
+  matrix->mat[0][3] = -(right + left)/width;
+  matrix->mat[1][1] = 2/height;
+  matrix->mat[1][3] = -(top + bottom)/height;
+  matrix->mat[2][2] = -2/depth;
+  matrix->mat[2][3] = -(far + near)/depth;
+}
+
+void engine3D_matrix4f_setCameraRotation(engine3D_matrix4f_t *const matrix, const engine3D_vector3f_t forward, const engine3D_vector3f_t up) {
 	engine3D_vector3f_t f = engine3D_vector3f_normalized(forward);
 	engine3D_vector3f_t r = engine3D_vector3f_normalized(up);
 

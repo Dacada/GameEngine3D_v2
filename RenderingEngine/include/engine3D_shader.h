@@ -1,6 +1,8 @@
 #ifndef ENGINE3D_SHADER_H
 #define ENGINE3D_SHADER_H
 
+#include "engine3D_material.h"
+#include "engine3D_camera.h"
 #include <Base/engine3D_vector.h>
 #include <Base/engine3D_strToIntMap.h>
 
@@ -9,8 +11,12 @@
 #include <GL/gl.h>
 
 typedef struct engine3D_shader_t {
-	GLuint program;
-	engine3D_strToIntMap_t *uniforms;
+  GLuint program;
+  engine3D_strToIntMap_t *uniforms;
+  void(*updateUniforms)(struct engine3D_shader_t *const,
+			const engine3D_transform_t *const,
+			const engine3D_camera_t *const,
+			const engine3D_material_t *const);
 } engine3D_shader_t;
 
 engine3D_shader_t *engine3D_shader_init(engine3D_shader_t *const shader);

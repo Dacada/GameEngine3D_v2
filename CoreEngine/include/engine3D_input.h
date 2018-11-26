@@ -8,6 +8,7 @@
 #include <GL/gl.h>
 #include <stdbool.h>
 
+// possible cursor modes
 typedef enum engine3D_input_cursorMode {
 	ENGINE3D_CURSOR_ENABLED,  // Normal
 	ENGINE3D_CURSOR_HIDDEN,   // Invisible but usable
@@ -138,6 +139,7 @@ typedef enum engine3D_input_keyCode {
 	ENGINE3D_KEY_MENU = GLFW_KEY_MENU
 } engine3D_input_keyCode;
 
+// possible mouse buttons, so that we don't have to use directly glfw constants
 typedef enum engine3D_input_mouseButton {
 	ENGINE3D_MOUSE_BUTTON_1 = GLFW_MOUSE_BUTTON_1,
 	ENGINE3D_MOUSE_BUTTON_2 = GLFW_MOUSE_BUTTON_2,
@@ -152,26 +154,37 @@ typedef enum engine3D_input_mouseButton {
 #define ENGINE3D_MOUSE_BUTTON_RIGHT (ENGINE3D_MOUSE_BUTTON_2)
 #define ENGINE3D_MOUSE_BUTTON_MIDDLE (ENGINE3D_MOUSE_BUTTON_3)
 
+// intialize input system
 void engine3D_input_init(engine3D_window_t *const window);
 
+// update inputs, called on every frame
 void engine3D_input_update(void);
 
+// get whether a key has been pressed
 bool engine3D_input_getKey(const engine3D_input_keyCode keyCode);
 
+// get whether a key is being pressed
 bool engine3D_input_getKeyDown(const engine3D_input_keyCode keyCode);
 
+// get whether a key has been released
 bool engine3D_input_getKeyUp(const engine3D_input_keyCode keyCode);
 
+// get whether a mouse button has been pressed
 bool engine3D_input_getMouse(const engine3D_input_mouseButton mouseButton);
 
+// get whether a mouse button is being pressed
 bool engine3D_input_getMouseDown(const engine3D_input_mouseButton mouseButton);
 
+// get whether a mouse button was released
 bool engine3D_input_getMouseUp(const engine3D_input_mouseButton mouseButton);
 
+// get current mouse position
 void engine3D_input_getMousePosition(engine3D_vector2f_t *const position);
 
+// set the current mouse position
 void engine3D_input_setMousePosition(const engine3D_vector2f_t *const position);
 
+// set the cursor mode, useful for hiding the cursor
 void engine3D_input_setCursor(const engine3D_input_cursorMode mode);
 
 #endif /* ENGINE3D_INPUT_H */

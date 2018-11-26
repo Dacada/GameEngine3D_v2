@@ -5,6 +5,9 @@
 #include <Base/engine3D_transform.h>
 
 engine3D_gameObject_t *engine3D_gameObject_init(engine3D_gameObject_t *const gameObject) {
+  gameObject->transform = engine3D_util_safeMalloc(sizeof(engine3D_transform_t));
+  engine3D_transform_reset(gameObject->transform);
+  
   gameObject->children = engine3D_util_safeMalloc(sizeof(engine3D_growingArray_t));
   engine3D_growingArray_init(gameObject->children, sizeof(engine3D_gameObject_t*), 4);
 
@@ -50,15 +53,15 @@ void engine3D_gameObject_update(engine3D_gameObject_t *const gameObject) {
   }
 }
 
-void engine3D_gameObject_render(engine3D_gameObject_t *const gameObject) {
+void engine3D_gameObject_render(const engine3D_gameObject_t *const gameObject, engine3D_shader_t *const shader) {
   for (size_t i = 0; i < engine3D_growingArray_length(gameObject->components); i++) {
     engine3D_gameComponent_t **component = engine3D_growingArray_getAt(gameObject->components, i);
-    (*component)->render(*component);
+    (*component)->render(*component, shader);
   }
   
   for (size_t i = 0; i < engine3D_growingArray_length(gameObject->children); i++) {
     engine3D_gameObject_t **child = engine3D_growingArray_getAt(gameObject->children, i);
-    engine3D_gameObject_render(*child);
+    engine3D_gameObject_render(*child, shader);
   }
 }
 
@@ -78,4 +81,7 @@ void engine3D_gameObject_cleanup(engine3D_gameObject_t *const gameObject) {
   engine3D_growingArray_discard(gameObject->components);
   free(gameObject->components);
   gameObject->components = NULL;
+
+  free(gameObject->transform);
+  gameObject->transform = NULL;
 }

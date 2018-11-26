@@ -28,6 +28,7 @@ static void addProgram(const char *const text, engine3D_shader_t * const shader,
 engine3D_shader_t *engine3D_shader_init(engine3D_shader_t * const shader) {
 	shader->uniforms = engine3D_strToIntMap_new();
 	engine3D_strToIntMap_init(shader->uniforms);
+	shader->updateUniforms = NULL;
 
 	shader->program = glCreateProgram();
 	if (shader->program == 0)
