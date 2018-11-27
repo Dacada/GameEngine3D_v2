@@ -12,6 +12,10 @@ float engine3D_vector2f_dot(const engine3D_vector2f_t v1, const engine3D_vector2
 	return v1.x * v2.x + v1.y * v2.y;
 }
 
+float engine3D_vector2f_cross(const engine3D_vector2f_t v1, const engine3D_vector2f_t v2) {
+  return v1.x * v2.y - v1.y * v2.x;
+}
+
 engine3D_vector2f_t *engine3D_vector2f_normalize(engine3D_vector2f_t * const v) {
 	float length = engine3D_vector2f_length(*v);
 	v->x /= length;
@@ -97,6 +101,14 @@ engine3D_vector2f_t engine3D_vector2f_divf(const engine3D_vector2f_t v, const fl
 	result.x = v.x / f;
 	result.y = v.y / f;
 	return result;
+}
+
+engine3D_vector2f_t engine3D_vector2f_lerp(const engine3D_vector2f_t v, const engine3D_vector2f_t dest, float lerp_factor) {
+  return engine3D_vector2f_add(engine3D_vector2f_mulf(engine3D_vector2f_sub(dest, v), lerp_factor), v);
+}
+
+bool engine3D_vector2f_equal(const engine3D_vector2f_t v1, const engine3D_vector2f_t v2) {
+  return v1.x == v2.x && v1.y == v2.y;
 }
 
 int engine3D_vector2f_fprintf(FILE *stream, const engine3D_vector2f_t v) {
@@ -236,6 +248,38 @@ engine3D_vector3f_t engine3D_vector3f_abs(const engine3D_vector3f_t v) {
 	result.y = fabsf(v.y);
 	result.z = fabsf(v.z);
 	return result;
+}
+
+engine3D_vector3f_t engine3D_vector3f_lerp(const engine3D_vector3f_t v, const engine3D_vector3f_t dest, float lerp_factor) {
+  return engine3D_vector3f_add(engine3D_vector3f_mulf(engine3D_vector3f_sub(dest, v), lerp_factor), v);
+}
+
+bool engine3D_vector3f_equal(const engine3D_vector3f_t v1, const engine3D_vector3f_t v2) {
+  return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
+}
+
+engine3D_vector2f_t engine3D_vector3f_xy(const engine3D_vector3f_t v) {
+  return (engine3D_vector2f_t){ v.x, v.y };
+}
+
+engine3D_vector2f_t engine3D_vector3f_yz(const engine3D_vector3f_t v) {
+  return (engine3D_vector2f_t){ v.y, v.z };
+}
+
+engine3D_vector2f_t engine3D_vector3f_xz(const engine3D_vector3f_t v) {
+  return (engine3D_vector2f_t){ v.x, v.z };
+}
+
+engine3D_vector2f_t engine3D_vector3f_yx(const engine3D_vector3f_t v) {
+  return (engine3D_vector2f_t){ v.y, v.x };
+}
+
+engine3D_vector2f_t engine3D_vector3f_zy(const engine3D_vector3f_t v) {
+  return (engine3D_vector2f_t){ v.z, v.y };
+}
+
+engine3D_vector2f_t engine3D_vector3f_zx(const engine3D_vector3f_t v) {
+  return (engine3D_vector2f_t){ v.z, v.x };
 }
 
 int engine3D_vector3f_fprintf(FILE * stream, const engine3D_vector3f_t v) {

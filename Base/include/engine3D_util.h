@@ -9,7 +9,7 @@
 #define UNUSED(x) (void)(x)
 
 // angle in degrees to radians
-#define TO_RADIANS(angle) ((angle) / 180 * (float)M_PI)
+#define TO_RADIANS(angle) (((float)angle) / 180 * (float)M_PI)
 
 // base path for the resources directory
 extern const char *engine3D_util_resourcesPath;

@@ -3,8 +3,6 @@
 #ifdef _WIN32
 #include <Windows.h>
 
-const double engine3D_timer_second = 1;
-
 static double frequency;
 static LARGE_INTEGER start;
 
@@ -33,7 +31,7 @@ void engine3D_time_sleep(const double t) {
 #include <errno.h>
 #include <time.h>
 
-const double engine3D_timer_second = 1000000.0;
+static const double second = 1000000.0;
 
 static struct timespec start;
 
@@ -50,12 +48,12 @@ double engine3D_timer_getTime(void) {
 		perror("clock_gettime");
 		engine3D_util_bail("CLOCK_MONOTONIC failed");
 	}
-	return ((double)(tp.tv_nsec - start.tv_nsec))/1000.0 + ((double)(tp.tv_sec - start.tv_sec))*1000000.0;
+	return (((double)(tp.tv_nsec - start.tv_nsec))/1000.0 + ((double)(tp.tv_sec - start.tv_sec))*1000000.0)/second;
 }
 
 void engine3D_time_sleep(const double t) {
 	struct timespec tp, currentTime;
-	long t_long = (long)t;
+	long t_long = (long)(t*second);
 
 	if (clock_gettime(CLOCK_MONOTONIC, &currentTime) == -1) {
 		perror("clock_gettime");
@@ -77,13 +75,3 @@ void engine3D_time_sleep(const double t) {
 	}
 }
 #endif
-
-static double delta;
-
-double engine3D_time_getDelta(void) {
-	return delta;
-}
-
-void engine3D_time_setDelta(const double d) {
-	delta = d;
-}

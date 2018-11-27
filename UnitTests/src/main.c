@@ -2,6 +2,7 @@
 #include <Base/engine3D_strToIntMap.h>
 #include <Base/engine3D_time.h>
 #include <Base/engine3D_vector.h>
+#include <Base/engine3D_util.h>
 #include <check.h>
 
 START_TEST(GrowingArrayWithFinish) {
@@ -18,6 +19,8 @@ START_TEST(GrowingArrayWithFinish) {
 	for (int i = 0; i < 1000; i++) {
 		ck_assert_double_eq((double)i, elements[i]);
 	}
+
+	free(elements);
 }
 END_TEST;
 
@@ -37,6 +40,8 @@ START_TEST(GrowingArrayWithoutFinish) {
 	for (int i = 0; i < 1000; i++) {
 		ck_assert_double_eq((double)i, elements[i]);
 	}
+
+	free(elements);
 }
 END_TEST;
 
@@ -65,6 +70,7 @@ START_TEST(StrToIntMapNoCollision) {
 	ck_assert_int_eq(9, engine3D_strToIntMap_get(map, "i"));
 	ck_assert_int_eq(10, engine3D_strToIntMap_get(map, "j"));
 	ck_assert_int_eq(11, engine3D_strToIntMap_get(map, "k"));
+	engine3D_strToIntMap_destroy(map);
 	free(map);
 }
 END_TEST;
@@ -94,6 +100,7 @@ START_TEST(StrToIntMapWithCollision) {
 	ck_assert_int_eq(9, engine3D_strToIntMap_get(map, "fgi"));
 	ck_assert_int_eq(10, engine3D_strToIntMap_get(map, "fvz"));
 	ck_assert_int_eq(11, engine3D_strToIntMap_get(map, "gej"));
+	engine3D_strToIntMap_destroy(map);
 	free(map);
 }
 END_TEST;
@@ -101,17 +108,10 @@ END_TEST;
 START_TEST(GetTimeTest) {
 	engine3D_timer_init();
 	double t = engine3D_timer_getTime();
-	engine3D_time_sleep(0.1 * engine3D_timer_second);
+	engine3D_time_sleep(0.1);
 	double diff = engine3D_timer_getTime() - t;
 
-	ck_assert_double_eq_tol(0.1, diff / engine3D_timer_second, 0.01);
-}
-END_TEST;
-
-START_TEST(GetDeltaTest) {
-	double d = 123.456;
-	engine3D_time_setDelta(d);
-	ck_assert_double_eq(d, engine3D_time_getDelta());
+	ck_assert_double_eq_tol(0.1, diff, 0.01);
 }
 END_TEST;
 
@@ -135,6 +135,17 @@ START_TEST(Vector2fDotTest) {
 }
 END_TEST;
 
+START_TEST(Vector2fCrossTest) {
+	engine3D_vector2f_t v1, v2;
+	v1.x = 1;
+	v1.y = 2;
+	v2.x = 4;
+	v2.y = 8;
+	float r = engine3D_vector2f_cross(v1, v2);
+	ck_assert_float_eq(0.0f, r);
+}
+END_TEST;
+
 START_TEST(Vector2fNormalizeTest) {
 	engine3D_vector2f_t v;
 	v.x = 3;
@@ -149,7 +160,7 @@ START_TEST(Vector2fRotateTest) {
 	engine3D_vector2f_t v, r;
 	v.x = 1;
 	v.y = 0;
-	r = engine3D_vector2f_rotateDeg(v, 45);
+	r = engine3D_vector2f_rotateRad(v, TO_RADIANS(45));
 	ck_assert_float_eq_tol(0.707f, r.x, 0.001f);
 	ck_assert_float_eq_tol(0.707f, r.y, 0.001f);
 }
@@ -243,6 +254,31 @@ START_TEST(Vector2fDivfTest) {
 }
 END_TEST;
 
+START_TEST(Vector2fLerpTest) {
+  engine3D_vector2f_t v1, v2, r;
+  v1.x = 4;
+  v1.y = 9;
+  v2.x = 1;
+  v2.y = 3;
+  r = engine3D_vector2f_lerp(v1, v2, 0.5f);
+  ck_assert_float_eq_tol(2.5f, r.x, 0.1f);
+  ck_assert_float_eq_tol(6.0f, r.y, 0.1f);
+}
+END_TEST;
+
+START_TEST(Vector2fEqualTest) {
+  engine3D_vector2f_t v1, v2;
+  v1.x = 4;
+  v1.y = 9;
+  v2.x = 1;
+  v2.y = 3;
+  ck_assert(!engine3D_vector2f_equal(v1, v2));
+  v2.x = 4;
+  v2.y = 9;
+  ck_assert(engine3D_vector2f_equal(v1, v2));
+}
+END_TEST;
+
 START_TEST(Vector3fDotTest) {
 	engine3D_vector3f_t v1, v2;
 	v1.x = 1;
@@ -276,7 +312,7 @@ START_TEST(Vector3fRotateTest) {
 	a.x = 1;
 	a.y = 2;
 	a.z = 3;
-	r = engine3D_vector3f_rotateDeg(v, 45, a);
+	r = engine3D_vector3f_rotateRad(v, TO_RADIANS(45), a);
 	ck_assert_float_eq_tol(10.561f, r.x, 0.001f);
 	ck_assert_float_eq_tol(7.958f, r.y, 0.001f);
 	ck_assert_float_eq_tol(6.661f, r.z, 0.001f);
@@ -403,6 +439,67 @@ START_TEST(Vector3fDivfTest) {
 	ck_assert_float_eq_tol(1.3f, r.x, 0.1f);
 	ck_assert_float_eq_tol(1.6f, r.y, 0.1f);
 	ck_assert_float_eq_tol(2.3f, r.z, 0.1f);
+}
+END_TEST;
+
+START_TEST(Vector3fLerpTest) {
+  engine3D_vector3f_t v1, v2, r;
+  v1.x = 4;
+  v1.y = 9;
+  v1.z = 1;
+  v2.x = 1;
+  v2.y = 3;
+  v2.z = 8;
+  r = engine3D_vector3f_lerp(v1, v2, 0.5f);
+  ck_assert_float_eq_tol(2.5f, r.x, 0.1f);
+  ck_assert_float_eq_tol(6.0f, r.y, 0.1f);
+  ck_assert_float_eq_tol(4.5f, r.z, 0.1f);
+}
+END_TEST;
+
+START_TEST(Vector3fEqualTest) {
+  engine3D_vector3f_t v1, v2;
+  v1.x = 4;
+  v1.y = 9;
+  v1.z = 1;
+  v2.x = 1;
+  v2.y = 3;
+  v2.z = 8;
+  ck_assert(!engine3D_vector3f_equal(v1, v2));
+  v2.x = 4;
+  v2.y = 9;
+  v2.z = 1;
+  ck_assert(engine3D_vector3f_equal(v1, v2));
+}
+END_TEST;
+
+START_TEST(Vector3fSwizzlingTest) {
+  engine3D_vector3f_t v = { 10, 20, 30 };
+  engine3D_vector2f_t r;
+  
+  r = engine3D_vector3f_xy(v);
+  ck_assert_float_eq(10.0f, r.x);
+  ck_assert_float_eq(20.0f, r.y);
+  
+  r = engine3D_vector3f_yz(v);
+  ck_assert_float_eq(20.0f, r.x);
+  ck_assert_float_eq(30.0f, r.y);
+  
+  r = engine3D_vector3f_xz(v);
+  ck_assert_float_eq(10.0f, r.x);
+  ck_assert_float_eq(30.0f, r.y);
+  
+  r = engine3D_vector3f_yx(v);
+  ck_assert_float_eq(20.0f, r.x);
+  ck_assert_float_eq(10.0f, r.y);
+  
+  r = engine3D_vector3f_zy(v);
+  ck_assert_float_eq(30.0f, r.x);
+  ck_assert_float_eq(20.0f, r.y);
+  
+  r = engine3D_vector3f_zx(v);
+  ck_assert_float_eq(30.0f, r.x);
+  ck_assert_float_eq(10.0f, r.y);
 }
 END_TEST;
 
@@ -568,12 +665,12 @@ Suite *makeSuite(void) {
 
 	TCase *tc_time = tcase_create("Time");
 	tcase_add_test(tc_time, GetTimeTest);
-	tcase_add_test(tc_time, GetDeltaTest);
 	suite_add_tcase(s, tc_time);
 
 	TCase *tc_vector = tcase_create("Vector");
 	tcase_add_test(tc_vector, Vector2fLengthTest);
 	tcase_add_test(tc_vector, Vector2fDotTest);
+	tcase_add_test(tc_vector, Vector2fCrossTest);
 	tcase_add_test(tc_vector, Vector2fNormalizeTest);
 	tcase_add_test(tc_vector, Vector2fRotateTest);
 	tcase_add_test(tc_vector, Vector2fAddTest);
@@ -584,6 +681,8 @@ Suite *makeSuite(void) {
 	tcase_add_test(tc_vector, Vector2fMulfTest);
 	tcase_add_test(tc_vector, Vector2fDivTest);
 	tcase_add_test(tc_vector, Vector2fDivfTest);
+	tcase_add_test(tc_vector, Vector2fLerpTest);
+	tcase_add_test(tc_vector, Vector2fEqualTest);
 	tcase_add_test(tc_vector, Vector3fDotTest);
 	tcase_add_test(tc_vector, Vector3fNormalizeTest);
 	tcase_add_test(tc_vector, Vector3fRotateTest);
@@ -596,6 +695,9 @@ Suite *makeSuite(void) {
 	tcase_add_test(tc_vector, Vector3fMulfTest);
 	tcase_add_test(tc_vector, Vector3fDivTest);
 	tcase_add_test(tc_vector, Vector3fDivfTest);
+	tcase_add_test(tc_vector, Vector3fLerpTest);
+	tcase_add_test(tc_vector, Vector3fEqualTest);
+	tcase_add_test(tc_vector, Vector3fSwizzlingTest);
 	tcase_add_test(tc_vector, Matrix4fIdentityTest);
 	tcase_add_test(tc_vector, Matrix4fMulTest);
 	tcase_add_test(tc_vector, QuaternionLengthTest);

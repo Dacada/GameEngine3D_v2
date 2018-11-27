@@ -45,13 +45,13 @@ void engine3D_camera_move(engine3D_camera_t *const camera, const engine3D_vector
 
 void engine3D_camera_rotateY(engine3D_camera_t *const camera, const float angleDeg) {
 	engine3D_vector3f_t HAxis = engine3D_vector3f_normalized(engine3D_vector3f_cross(yAxis, camera->forward));
-	camera->forward = engine3D_vector3f_normalized(engine3D_vector3f_rotateDeg(camera->forward, angleDeg, yAxis));
+	camera->forward = engine3D_vector3f_normalized(engine3D_vector3f_rotateRad(camera->forward, TO_RADIANS(angleDeg), yAxis));
 	camera->up = engine3D_vector3f_normalized(engine3D_vector3f_cross(camera->forward, HAxis));
 }
 
 void engine3D_camera_rotateX(engine3D_camera_t *const camera, const float angleDeg) {
 	engine3D_vector3f_t HAxis = engine3D_vector3f_normalized(engine3D_vector3f_cross(yAxis, camera->forward));
-	camera->forward = engine3D_vector3f_normalized(engine3D_vector3f_rotateDeg(camera->forward, angleDeg, HAxis));
+	camera->forward = engine3D_vector3f_normalized(engine3D_vector3f_rotateRad(camera->forward, TO_RADIANS(angleDeg), HAxis));
 	camera->up = engine3D_vector3f_normalized(engine3D_vector3f_cross(camera->forward, HAxis));
 }
 

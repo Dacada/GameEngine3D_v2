@@ -29,27 +29,27 @@ void engine3D_gameObject_addComponent(engine3D_gameObject_t *const gameObject, e
   component->init(component);
 }
 
-void engine3D_gameObject_input(engine3D_gameObject_t *const gameObject) {
+void engine3D_gameObject_input(engine3D_gameObject_t *const gameObject, const double delta) {
   for (size_t i = 0; i < engine3D_growingArray_length(gameObject->components); i++) {
     engine3D_gameComponent_t **component = engine3D_growingArray_getAt(gameObject->components, i);
-    (*component)->input(*component);
+    (*component)->input(*component, delta);
   }
   
   for (size_t i = 0; i < engine3D_growingArray_length(gameObject->children); i++) {
     engine3D_gameObject_t **child = engine3D_growingArray_getAt(gameObject->children, i);
-    engine3D_gameObject_input(*child);
+    engine3D_gameObject_input(*child, delta);
   }
 }
 
-void engine3D_gameObject_update(engine3D_gameObject_t *const gameObject) {
+void engine3D_gameObject_update(engine3D_gameObject_t *const gameObject, const double delta) {
   for (size_t i = 0; i < engine3D_growingArray_length(gameObject->components); i++) {
     engine3D_gameComponent_t **component = engine3D_growingArray_getAt(gameObject->components, i);
-    (*component)->update(*component);
+    (*component)->update(*component, delta);
   }
   
   for (size_t i = 0; i < engine3D_growingArray_length(gameObject->children); i++) {
     engine3D_gameObject_t **child = engine3D_growingArray_getAt(gameObject->children, i);
-    engine3D_gameObject_update(*child);
+    engine3D_gameObject_update(*child, delta);
   }
 }
 

@@ -26,7 +26,7 @@ static void run(engine3D_core_t *engine) {
 		double lastFrameElapsedTime = currentFrameTime - lastFrameTime;
 		lastFrameTime = currentFrameTime;
 
-		unprocessedTime += lastFrameElapsedTime / engine3D_timer_second;
+		unprocessedTime += lastFrameElapsedTime;
 		frameCounter += lastFrameElapsedTime;
 
 		while (unprocessedTime > engine->frameTime)
@@ -39,14 +39,14 @@ static void run(engine3D_core_t *engine) {
 				engine3D_core_stop(engine);
 			}
 
-			engine3D_time_setDelta(engine->frameTime);
+			double delta = engine->frameTime;
 
-			engine->game->input(engine->game);
+			engine->game->input(engine->game, delta);
 			engine3D_input_update();
 
-			engine->game->update(engine->game);
+			engine->game->update(engine->game, delta);
 
-			if (frameCounter >= engine3D_timer_second) {
+			if (frameCounter >= 1) {
 				engine3D_util_debugPrintf("%d", engine->fps);
 
 				engine->fps = 0;
@@ -59,7 +59,7 @@ static void run(engine3D_core_t *engine) {
 		  engine3D_window_update(engine->window);
 		  engine->fps++;
 		} else {
-			engine3D_time_sleep(0.001 * engine3D_timer_second);
+			engine3D_time_sleep(0.001);
 		}
 	}
 

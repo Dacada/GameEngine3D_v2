@@ -2,6 +2,7 @@
 #define ENGINE3D_VECTOR_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 // vector of 2 elements
 typedef struct engine3D_vector2f_t {
@@ -13,6 +14,9 @@ float engine3D_vector2f_length(const engine3D_vector2f_t v);
 
 // dot operation
 float engine3D_vector2f_dot(const engine3D_vector2f_t v1, const engine3D_vector2f_t v2);
+
+// cross product
+float engine3D_vector2f_cross(const engine3D_vector2f_t v1, const engine3D_vector2f_t v2);
 
 // normalize vector
 engine3D_vector2f_t *engine3D_vector2f_normalize(engine3D_vector2f_t *const v);
@@ -46,6 +50,12 @@ engine3D_vector2f_t engine3D_vector2f_div(const engine3D_vector2f_t v1, const en
 
 // divide a vector by a scalar
 engine3D_vector2f_t engine3D_vector2f_divf(const engine3D_vector2f_t v, const float f);
+
+// linear interpolation between two vectors
+engine3D_vector2f_t engine3D_vector2f_lerp(const engine3D_vector2f_t v, const engine3D_vector2f_t dest, float lerp_factor);
+
+// return whether two vectors are equal
+bool engine3D_vector2f_equal(const engine3D_vector2f_t v1, const engine3D_vector2f_t v2);
 
 // print a vector to given stream in a pretty way
 int engine3D_vector2f_fprintf(FILE *stream, const engine3D_vector2f_t v);
@@ -100,6 +110,30 @@ engine3D_vector3f_t engine3D_vector3f_divf(const engine3D_vector3f_t v, const fl
 
 // return a copy of a vector where each value is the absolute value
 engine3D_vector3f_t engine3D_vector3f_abs(const engine3D_vector3f_t v);
+
+// linear interpolation between two vectors
+engine3D_vector3f_t engine3D_vector3f_lerp(const engine3D_vector3f_t v, const engine3D_vector3f_t dest, float lerp_factor);
+
+// return whether two vectors are equal
+bool engine3D_vector3f_equal(const engine3D_vector3f_t v1, const engine3D_vector3f_t v2);
+
+// get xy component of vector
+engine3D_vector2f_t engine3D_vector3f_xy(const engine3D_vector3f_t v);
+
+// get yz component of vector
+engine3D_vector2f_t engine3D_vector3f_yz(const engine3D_vector3f_t v);
+
+// get xz component of vector
+engine3D_vector2f_t engine3D_vector3f_xz(const engine3D_vector3f_t v);
+
+// get yx component of vector
+engine3D_vector2f_t engine3D_vector3f_yx(const engine3D_vector3f_t v);
+
+// get zy component of vector
+engine3D_vector2f_t engine3D_vector3f_zy(const engine3D_vector3f_t v);
+
+// get zx component of vector
+engine3D_vector2f_t engine3D_vector3f_zx(const engine3D_vector3f_t v);
 
 // print a vector to given stream in a pretty way
 int engine3D_vector3f_fprintf(FILE *stream, const engine3D_vector3f_t v);

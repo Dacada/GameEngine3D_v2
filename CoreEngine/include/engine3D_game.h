@@ -5,10 +5,10 @@
 
 // state and methods of a game to be overridden by an actual implementation, ran by an engine
 typedef struct engine3D_game_t {
-  void(*init)(struct engine3D_game_t*); // init method to initialize the game
-  void(*input)(struct engine3D_game_t*); // input method to process input
-  void(*update)(struct engine3D_game_t*); // update method to update internal state
-  void(*cleanup)(struct engine3D_game_t*); // cleanup method to deallocate and clean elements
+  void(*init)(struct engine3D_game_t *const); // init method to initialize the game
+  void(*input)(struct engine3D_game_t *const, const double delta); // input method to process input
+  void(*update)(struct engine3D_game_t *const, const double delta); // update method to update internal state
+  void(*cleanup)(struct engine3D_game_t *const); // cleanup method to deallocate and clean elements
   engine3D_gameObject_t *root; // root game object of the object hierarchy
 } engine3D_game_t;
 

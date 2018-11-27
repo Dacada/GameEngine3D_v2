@@ -76,6 +76,7 @@ static void cleanup(engine3D_game_t *g) {
   free(game->material);
   engine3D_camera_cleanup(game->camera);
   free(game->camera);
+  free(game->game.root);
 }
 
 void makeMyGameImplementation(myGameImplementation *game) {

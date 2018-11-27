@@ -23,10 +23,10 @@ void engine3D_gameObject_addChild(engine3D_gameObject_t *const gameObject, engin
 void engine3D_gameObject_addComponent(engine3D_gameObject_t *const gameObject, engine3D_gameComponent_t *const component);
 
 // process input for the object: process input for all its components and all its children objects
-void engine3D_gameObject_input(engine3D_gameObject_t *const gameObject);
+void engine3D_gameObject_input(engine3D_gameObject_t *const gameObject, const double delta);
 
 // process updates for the object: process updates for its components and all its children objects
-void engine3D_gameObject_update(engine3D_gameObject_t *const gameObject);
+void engine3D_gameObject_update(engine3D_gameObject_t *const gameObject, const double delta);
 
 // render this object: render its components and all its children objects
 void engine3D_gameObject_render(const engine3D_gameObject_t *const gameObject,engine3D_shader_t *const shader);

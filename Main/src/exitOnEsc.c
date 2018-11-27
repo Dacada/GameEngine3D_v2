@@ -1,8 +1,11 @@
 #include <exitOnEsc.h>
 #include <CoreEngine/engine3D_core.h>
 #include <CoreEngine/engine3D_input.h>
+#include <Base/engine3D_util.h>
 
-static void input(engine3D_gameComponent_t *component) {
+static void input(engine3D_gameComponent_t *component, double delta) {
+  UNUSED(delta);
+  
   exitOnEsc_t *exitOnEsc = (exitOnEsc_t*)component;
 
   if (engine3D_input_getKey(ENGINE3D_KEY_ESCAPE)) {

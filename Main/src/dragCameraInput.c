@@ -4,9 +4,9 @@
 #include <RenderingEngine/engine3D_camera.h>
 #include <CoreEngine/engine3D_input.h>
 
-static void input(engine3D_gameComponent_t *component) {
+static void input(engine3D_gameComponent_t *component, double d) {
   dragCameraInput_t *dragCameraInput = (dragCameraInput_t*)component;
-  float delta = (float)engine3D_time_getDelta();
+  float delta = (float)d;
   float movAmt = delta * 10;
   
   if (engine3D_input_getMouseDown(ENGINE3D_MOUSE_BUTTON_LEFT)) {
