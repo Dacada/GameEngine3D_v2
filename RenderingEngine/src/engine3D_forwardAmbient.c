@@ -5,7 +5,7 @@
 static engine3D_forwardAmbient_t instance;
 static bool isLoaded = false;
 
-void updateUniforms(engine3D_shader_t * const s, const engine3D_transform_t *const transform, const engine3D_camera_t *const camera, const engine3D_material_t *const material) {
+static void updateUniforms(engine3D_shader_t * const s, const engine3D_transform_t *const transform, const engine3D_camera_t *const camera, const engine3D_material_t *const material) {
   engine3D_forwardAmbient_t *shader = (engine3D_forwardAmbient_t*)s;
 
   engine3D_matrix4f_t worldMatrix, viewProjection, projectedMatrix;

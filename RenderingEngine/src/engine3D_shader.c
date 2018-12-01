@@ -1,5 +1,7 @@
-#include <Base/engine3D_util.h>
 #include <engine3D_shader.h>
+#include <engine3D_baseLight.h>
+#include <engine3D_directionalLight.h>
+#include <Base/engine3D_util.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -159,4 +161,28 @@ void engine3D_shader_setUniformVec3f(const char *const uniform, const engine3D_v
 void engine3D_shader_setUniformMat4f(const char *const uniform, const engine3D_matrix4f_t *const value, const engine3D_shader_t *const shader) {
 	int location = engine3D_strToIntMap_get(shader->uniforms, uniform);
 	glUniformMatrix4fv(location, 1, GL_TRUE, (float*)value->mat);
+}
+
+void engine3D_shader_setUniformBaseLight(const char *const uniform, const engine3D_baseLight_t *const value, const engine3D_shader_t *const shader) {
+	char name[2048];
+
+	strncpy(name, uniform, 2048);
+	strncat(name, ".color", 2048);
+	engine3D_shader_setUniformVec3f(name, value->color, shader);
+
+	strncpy(name, uniform, 2048);
+	strncat(name, ".intensity", 2048);
+	engine3D_shader_setUniformf(name, value->intensity, shader);
+}
+
+void engine3D_shader_setUniformDirectionalLight(const char *const uniform, const engine3D_directionalLight_t *const value, const engine3D_shader_t *const shader) {
+	char name[2048];
+
+	strncpy(name, uniform, 2048);
+	strncat(name, ".base", 2048);
+	engine3D_shader_setUniformBaseLight(name, &value->base, shader);
+
+	strncpy(name, uniform, 2048);
+	strncat(name, ".direction", 2048);
+	engine3D_shader_setUniformVec3f(name, value->direction, shader);
 }

@@ -25,6 +25,8 @@ static void init(engine3D_game_t *g) {
   *texture = engine3D_texture_loadFromFile("test.png");
   material->texture = texture;
   material->color.x = 1; material->color.y = 1; material->color.z = 1;
+  material->specularIntensity = 1;
+  material->specularPower = 1;
 
   engine3D_mesh_t *mesh = engine3D_util_safeMalloc(sizeof(engine3D_mesh_t));
   game->mesh = mesh;

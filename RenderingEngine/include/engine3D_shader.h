@@ -3,6 +3,8 @@
 
 #include "engine3D_material.h"
 #include "engine3D_camera.h"
+#include "engine3D_baseLight.h"
+#include "engine3D_directionalLight.h"
 #include <Base/engine3D_vector.h>
 #include <Base/engine3D_strToIntMap.h>
 
@@ -48,5 +50,9 @@ void engine3D_shader_setUniformf(const char *const uniform, const float value, c
 void engine3D_shader_setUniformVec3f(const char *const uniform, const engine3D_vector3f_t value, const engine3D_shader_t *const shader);
 
 void engine3D_shader_setUniformMat4f(const char *const uniform, const engine3D_matrix4f_t *const value, const engine3D_shader_t *const shader);
+
+void engine3D_shader_setUniformBaseLight(const char *const uniform, const engine3D_baseLight_t *const value, const engine3D_shader_t *const shader);
+
+void engine3D_shader_setUniformDirectionalLight(const char *const uniform, const engine3D_directionalLight_t *const value, const engine3D_shader_t *const shader);
 
 #endif /* ENGINE3D_SHADER_H */

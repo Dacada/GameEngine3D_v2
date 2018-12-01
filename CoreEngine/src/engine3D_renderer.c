@@ -1,8 +1,11 @@
 #include <engine3D_renderer.h>
 #include <RenderingEngine/engine3D_forwardAmbient.h>
+#include <RenderingEngine/engine3D_forwardDirectional.h>
 #include <Base/engine3D_util.h>
 
-static const engine3D_vector3f_t ambientLight = { 0.2f, 0.2f, 0.2f };
+static engine3D_vector3f_t ambientLight = { 0.1f, 0.1f, 0.1f };
+static engine3D_directionalLight_t directionalLight1 = { { { 0.0f, 0.0f, 1.0f }, 0.4f }, { 1.0f, 1.0f, 1.0f } };
+static engine3D_directionalLight_t directionalLight2 = { { { 1.0f, 0.0f, 0.0f }, 0.4f }, { -1.0f, 1.0f, -1.0f } };
 
 static void clearScreen(void) {
   // TODO: Stencil Buffer
@@ -26,9 +29,24 @@ void engine3D_renderer_render(const engine3D_renderer_t *const renderer, const e
   UNUSED(renderer);
   clearScreen();
 
-  engine3D_forwardAmbient_t *shader = engine3D_forwardAmbient_getInstance();
-  shader->ambientIntensity = ambientLight;
-  engine3D_gameObject_render(object, (engine3D_shader_t *)shader);
+  engine3D_forwardAmbient_t *ambientShader = engine3D_forwardAmbient_getInstance();
+  ambientShader->ambientIntensity = ambientLight;
+  engine3D_gameObject_render(object, (engine3D_shader_t *)ambientShader);
+  
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
+  glDepthMask(false);
+  glDepthFunc(GL_EQUAL);
+
+  engine3D_forwardDirectional_t *directionalShader = engine3D_forwardDirectional_getInstance();
+  directionalShader->directionalLight = &directionalLight1;
+  engine3D_gameObject_render(object, (engine3D_shader_t *)directionalShader);
+  directionalShader->directionalLight = &directionalLight2;
+  engine3D_gameObject_render(object, (engine3D_shader_t *)directionalShader);
+
+  glDepthFunc(GL_LESS);
+  glDepthMask(true);
+  glDisable(GL_BLEND);
   
   //engine3D_gameObject_render(object, (engine3D_shader_t *)engine3D_basicShader_getInstance());
 }
