@@ -1,6 +1,8 @@
 #include <engine3D_shader.h>
 #include <engine3D_baseLight.h>
 #include <engine3D_directionalLight.h>
+#include <engine3D_pointLight.h>
+#include <engine3D_spotLight.h>
 #include <Base/engine3D_util.h>
 #include <stdlib.h>
 #include <string.h>
@@ -185,4 +187,56 @@ void engine3D_shader_setUniformDirectionalLight(const char *const uniform, const
 	strncpy(name, uniform, 2048);
 	strncat(name, ".direction", 2048);
 	engine3D_shader_setUniformVec3f(name, value->direction, shader);
+}
+
+void engine3D_shader_setUniformPointLight(const char *const uniform, const engine3D_pointLight_t *const value, const engine3D_shader_t *const shader) {
+  char name[2048];
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".base", 2048);
+  engine3D_shader_setUniformBaseLight(name, &value->base, shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".atten", 2048);
+  engine3D_shader_setUniformAttenuation(name, &value->atten, shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".position", 2048);
+  engine3D_shader_setUniformVec3f(name, value->position, shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".range", 2048);
+  engine3D_shader_setUniformf(name, value->range, shader);
+}
+
+void engine3D_shader_setUniformAttenuation(const char *const uniform, const engine3D_attenuation_t *const value, const engine3D_shader_t *const shader) {
+  char name[2048];
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".constant", 2048);
+  engine3D_shader_setUniformf(name, value->constant, shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".linear", 2048);
+  engine3D_shader_setUniformf(name, value->linear, shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".exponent", 2048);
+  engine3D_shader_setUniformf(name, value->exponent, shader);
+}
+
+void engine3D_shader_setUniformSpotLight(const char *const uniform, const engine3D_spotLight_t *const value, const engine3D_shader_t *const shader) {
+  char name[2048];
+
+  strncpy(name, uniform, 2048);
+  strncat(name, ".pointLight", 2048);
+  engine3D_shader_setUniformPointLight(name, &value->pointLight, shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".direction", 2048);
+  engine3D_shader_setUniformVec3f(name, value->direction, (engine3D_shader_t*)shader);
+  
+  strncpy(name, uniform, 2048);
+  strncat(name, ".cutoff", 2048);
+  engine3D_shader_setUniformf(name, value->cutoff, (engine3D_shader_t*)shader);
 }

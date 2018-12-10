@@ -49,8 +49,8 @@ static void init(engine3D_game_t *g) {
   engine3D_gameObject_init(planeObject);
   engine3D_gameObject_addComponent(planeObject, (engine3D_gameComponent_t*)meshRenderer);
   planeObject->transform->pos.x = 0;
-  planeObject->transform->pos.y = -1;
-  planeObject->transform->pos.z = 5;
+  planeObject->transform->pos.y = 0;
+  planeObject->transform->pos.z = 0;
 
   engine3D_gameObject_addChild(g->root, planeObject);
 
